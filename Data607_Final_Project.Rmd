@@ -1,0 +1,272 @@
+---
+title: "Data 607 Final Project"
+author: "Mohamed Hassan-El Serafi"
+date: "2023-04-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
+```
+
+
+
+```{r}
+library(tidyverse)
+library(nbastatR)
+library(hoopR)
+```
+
+
+```{r}
+
+library(future)
+#game_logs(seasons = 2010:2023)
+```
+
+
+```{r}
+Sys.setenv("VROOM_CONNECTION_SIZE" = 131072 * 2)
+```
+
+
+
+
+
+```{r}
+all_salaries <- 
+  get_all_team_salaries()
+
+non_guaranteed_players <- 
+  all_salaries %>% 
+  dplyr::filter(id.season %in% c("2015-16", "2016-17"),
+                is.non.guaranteed == T)
+
+non_guaranteed_players %>% 
+  View()
+
+team_2017_non_guaranteed_players <- 
+  non_guaranteed_players %>% 
+  group_by(id.season, team) %>% 
+  summarise(players = n(),
+            total.non_guaranteed.salary = sum(value, na.rm = T) %>% formattable::currency(digits = 0)
+            ) %>% 
+  ungroup() %>% 
+  arrange(desc(total.non_guaranteed.salary))
+
+team_2017_non_guaranteed_players %>% 
+  View()
+```
+
+
+```{r}
+all_nba_players <- 
+	get_nba_players_ids(league = "NBA",
+											active_only = F)
+
+players_1998 <-
+	get_nba_season_players(
+		year.season_start = 1998,
+		include_only_rostered_players = F,
+		return_message = T
+	)
+brooklyn_nets_2016_roster <- 
+  get_nba_team_season_roster(team = "Brooklyn Nets", year_season_end = 2016)
+
+players_1998_2015 <- get_nba_seasons_players(years = 1998:2014,
+																						 only_on_roster = T,
+																						 message = F)
+
+profiles_2015_season <-
+	get_season_player_profiles(year.season_start = 2014, include_headline_stats = T,
+														 only_rostered_players = T,
+														 message = T)
+```
+
+
+```{r}
+if(!require('nbastatR')) {
+    install.packages('nbastatR')
+    library('nbastatR')
+}
+```
+
+
+```{r}
+get_seasons_playoff_picture(seasons = 2015:2018,
+assign_to_environment = TRUE,
+ include_numeric_records = T)
+```
+
+```{r}
+# Install and Load the nbastatR package
+library('nbastatR')
+
+# Access the game tables for a particular season
+gamedata <- game_logs(seasons = 2010:2023)
+
+# Take a quick look at the data
+head(gamedata)
+```
+
+
+
+```{r}
+glimpse(gamedata)
+```
+
+
+```{r}
+teams <- teams_details(all_teams = TRUE)
+```
+
+
+```{r}
+unnest(teams)
+```
+
+
+
+
+
+```{r}
+ls("package:nbastatR")
+```
+
+```{r}
+team_playoffs <- teams_players_stats(seasons = 2010:2023, season_types = 'Playoffs')
+```
+
+```{r}
+unnest(team_playoffs)
+```
+
+```{r}
+install.packages("hoopR")
+```
+
+
+
+```{r}
+library(hoopR)
+```
+
+```{r}
+ls("package:hoopR")
+```
+
+
+
+```{r}
+# You can install using the pacman package using the following code:
+if (!requireNamespace('pacman', quietly = TRUE)){
+  install.packages('pacman')
+}
+pacman::p_load_current_gh("sportsdataverse/hoopR", dependencies = TRUE, update = TRUE)
+```
+
+
+
+```{r}
+
+remotes::install_github("saiemgilani/hoopR")
+```
+
+
+```{r}
+nba_playerdashboardbyclutch(season_type = "Playoffs")
+```
+
+```{r}
+nba_playerdashboardbygeneralsplits()
+```
+
+
+```{r}
+nba_playerdashboardbyshootingsplits()
+```
+
+
+
+```{r}
+nba_playerdashboardbyteamperformance()
+```
+
+
+```{r}
+nba_playerdashboardbyyearoveryear()
+```
+
+
+```{r}
+clutch_stats <- nba_leaguedashplayerclutch(season_type = "Playoffs")
+```
+
+```{r}
+clutch_stats
+```
+
+
+```{r}
+ls("package:nbastatR")
+```
+
+
+```{r}
+nba_stats <- nba_stats_api_items()
+```
+
+```{r}
+unnest(nba_stats)
+```
+
+```{r}
+ls("package:hoopR")
+```
+
+
+```{r}
+nba_hustlestatsboxscore()
+```
+
+
+```{r}
+player_team <- teams_players_stats()
+```
+
+```{r}
+nba_leaguestandings()
+```
+```{r}
+teams_shots(teams = "Brooklyn Nets",
+seasons = 2018)
+```
+
+
+
+```{r}
+teams_players_stats()
+```
+```{r}
+bref_players_stats(seasons = 2000:2023)
+```
+
+
+```{r}
+bref_teams_stats(
+  seasons = 2019,
+  return_message = TRUE,
+  assign_to_environment = TRUE,
+  nest_data = FALSE,
+  join_data = TRUE,
+  widen_data = TRUE
+)
+
+```
+
+
+```{r}
+nba_teamestimatedmetrics()
+```
+
+
