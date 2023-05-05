@@ -33,55 +33,8 @@ Sys.setenv("VROOM_CONNECTION_SIZE" = 131072 * 2)
 
 
 
-```{r}
-all_salaries <- 
-  get_all_team_salaries()
-
-non_guaranteed_players <- 
-  all_salaries %>% 
-  dplyr::filter(id.season %in% c("2015-16", "2016-17"),
-                is.non.guaranteed == T)
-
-non_guaranteed_players %>% 
-  View()
-
-team_2017_non_guaranteed_players <- 
-  non_guaranteed_players %>% 
-  group_by(id.season, team) %>% 
-  summarise(players = n(),
-            total.non_guaranteed.salary = sum(value, na.rm = T) %>% formattable::currency(digits = 0)
-            ) %>% 
-  ungroup() %>% 
-  arrange(desc(total.non_guaranteed.salary))
-
-team_2017_non_guaranteed_players %>% 
-  View()
-```
 
 
-```{r}
-all_nba_players <- 
-	get_nba_players_ids(league = "NBA",
-											active_only = F)
-
-players_1998 <-
-	get_nba_season_players(
-		year.season_start = 1998,
-		include_only_rostered_players = F,
-		return_message = T
-	)
-brooklyn_nets_2016_roster <- 
-  get_nba_team_season_roster(team = "Brooklyn Nets", year_season_end = 2016)
-
-players_1998_2015 <- get_nba_seasons_players(years = 1998:2014,
-																						 only_on_roster = T,
-																						 message = F)
-
-profiles_2015_season <-
-	get_season_player_profiles(year.season_start = 2014, include_headline_stats = T,
-														 only_rostered_players = T,
-														 message = T)
-```
 
 
 ```{r}
@@ -92,15 +45,10 @@ if(!require('nbastatR')) {
 ```
 
 
-```{r}
-get_seasons_playoff_picture(seasons = 2015:2018,
-assign_to_environment = TRUE,
- include_numeric_records = T)
-```
+
+
 
 ```{r}
-# Install and Load the nbastatR package
-library('nbastatR')
 
 # Access the game tables for a particular season
 gamedata <- game_logs(seasons = 2010:2023)
@@ -235,8 +183,16 @@ player_team <- teams_players_stats()
 ```
 
 ```{r}
+player_team
+```
+
+
+
+```{r}
 nba_leaguestandings()
 ```
+
+
 ```{r}
 teams_shots(teams = "Brooklyn Nets",
 seasons = 2018)
@@ -247,6 +203,8 @@ seasons = 2018)
 ```{r}
 teams_players_stats()
 ```
+
+
 ```{r}
 bref_players_stats(seasons = 2000:2023)
 ```
@@ -269,4 +227,186 @@ bref_teams_stats(
 nba_teamestimatedmetrics()
 ```
 
+
+```{r}
+team_log <- nba_teamdashboardbyclutch()
+```
+
+
+```{r}
+team_log
+```
+
+
+```{r}
+clutch_player <- nba_playerdashboardbyclutch()
+```
+
+
+```{r}
+clutch_player
+```
+
+
+```{r}
+ls("package:hoopR")
+```
+
+```{r}
+bref_teams_stats()
+```
+
+```{r}
+ls("package:hoopR")
+```
+
+```{r}
+ls("package:nbastatR")
+```
+
+```{r}
+# Get the game IDs from the past 3 seasons
+# Select seasons from 2018-2020 because it's the recent ones
+selectedSeasons <- c(2018:2020)
+
+# Get game IDs for Regular Season and Playoffs
+gameIds_Reg <- suppressWarnings(seasons_schedule(seasons = selectedSeasons, season_types = "Regular Season") %>% select(idGame, slugMatchup))
+```
+
+
+```{r}
+teams_shots(teams = "New York", seasons = 2022)
+```
+
+```{r}
+season2023 <- bref_teams_stats(seasons = 2023)
+head(season2023)
+```
+
+
+```{r}
+season2023 <- unnest(season2023)
+```
+
+```{r}
+glimpse(season2023)
+```
+
+
+```{r}
+season2023
+```
+
+```{r}
+clutch <- nba_playerdashboardbyclutch(season_type = "Playoffs")
+```
+
+```{r}
+ls("package:hoopR")
+```
+
+```{r}
+nba_playerdashboardbyclutch()
+```
+
+```{r}
+nba_leaguedashteamclutch()
+```
+
+
+```{r}
+nba_leaguedashteamstats()
+```
+
+
+
+
+```{r}
+player_clutch_rs <- nba_leaguedashplayerclutch(season_type = "Regular Season")
+player_clutch_playoffs <- nba_leaguedashplayerclutch(season_type = "Playoffs")
+```
+
+```{r}
+player_clutch_rs
+```
+```{r}
+ls("package:hoopR")
+```
+
+
+
+```{r}
+nba_teamplayeronoffdetails()
+```
+
+
+```{r}
+player_reg_season <- nba_leaguedashplayerstats(season_type = "Regular Season")
+player_playoffs <- nba_leaguedashplayerstats(season_type = "Playoffs")
+```
+
+```{r}
+summary(player_reg_season)
+```
+
+```{r}
+new_df <- data.frame(player_reg_season, check.names = FALSE)
+```
+
+
+```{r}
+summary(new_df)
+```
+
+
+```{r}
+nba_leaguedashplayerptshot()
+```
+
+
+
+
+```{r}
+#####################
+## Get game IDs
+#####################
+# Select seasons from 1949 and after
+selectedSeasons <- c(1996:1998)
+# Get game IDs for Regular Season and Playoffs
+gameIds_Reg <- suppressWarnings(seasons_schedule(seasons = selectedSeasons, season_types = "Regular Season") %>% select(idGame, slugMatchup))
+gameIds_PO <- suppressWarnings(seasons_schedule(seasons = selectedSeasons, season_types = "Playoffs") %>% select(idGame, slugMatchup))
+gameIds_all <- rbind(gameIds_Reg, gameIds_PO)
+
+# Peek at the game IDs
+head(gameIds_all)
+tail(gameIds_all)
+
+#####################
+## Retrieve gamelog data for players and teams
+#####################
+# Get player gamelogs
+P_gamelog_reg <- suppressWarnings(game_logs(seasons = selectedSeasons, league = "NBA", result_types = "player", season_types = "Regular Season"))
+P_gamelog_po <- suppressWarnings(game_logs(seasons = selectedSeasons, league = "NBA", result_types = "player", season_types = "Playoffs"))
+P_gamelog_all <- rbind(P_gamelog_reg, P_gamelog_po)
+View(head(P_gamelog_all))
+
+# Get team gamelogs
+T_gamelog_reg <- suppressWarnings(game_logs(seasons = selectedSeasons, league = "NBA", result_types = "team", season_types = "Regular Season"))
+T_gamelog_po <- suppressWarnings(game_logs(seasons = selectedSeasons, league = "NBA", result_types = "team", season_types = "Playoffs"))
+T_gamelog_all <- rbind(T_gamelog_reg, T_gamelog_po)
+View(head(T_gamelog_all))
+```
+
+
+
+
+
+
+
+```{r}
+p <- ggpairs(poverty[,c(2:6)], lower = list(continuous = wrap("smooth", se=FALSE, alpha = 0.7, size=0.5)))
+p[5,3] <- p[5,3] + theme(panel.border = element_rect(color = 'blue', fill = NA, size = 2))
+p[3,5] <- p[3,5] + theme(panel.border = element_rect(color = 'blue', fill = NA, size = 2))
+p
+```
 
