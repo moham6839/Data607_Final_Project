@@ -1,0 +1,61 @@
+---
+title: "Data607_Final_Project_Data_Analysis"
+author: "Mohamed Hassan & Eddie Xu"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Load Package
+```{r}
+library(tidyverse)
+```
+
+```{r}
+# read csv file extracted
+team_link <- "https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Team_Clutch_Data.csv"
+nba_team_dataset <- read_csv(team_link)
+
+head(nba_team_dataset, 1000)
+```
+
+```{r}
+# calculate the team possesion and offensive effiency
+nba_team_dataset <- nba_team_dataset %>%
+  mutate(team_possession = 0.96*(nba_team_dataset$FGA)+(nba_team_dataset$TOV) + 0.44*(nba_team_dataset$FTA)-nba_team_dataset$OREB) %>%
+  mutate(team_off = 100*(nba_team_dataset$PTS/nba_team_dataset$team_possession))
+
+head(nba_team_dataset)
+```
+
+```{r}
+# split the dataset into regular season and playoff seasons
+regular_season_dataset <- nba_team_dataset %>%
+  filter(Season_Type == "Regular Season")
+
+playoff_season_dataset <- nba_team_dataset %>%
+  filter(Season_Type == "Playoffs")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
