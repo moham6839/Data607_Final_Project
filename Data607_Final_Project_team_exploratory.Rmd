@@ -1,6 +1,6 @@
 ---
 title: "Data 607 Final Project"
-author: "Mohamed Hassan-El Serafi"
+author: "Mohamed Hassan-El Serafi and Eddie Xu"
 date: "2023-04-29"
 output: html_document
 ---
@@ -79,6 +79,10 @@ pacman::p_load_current_gh("sportsdataverse/hoopR", dependencies = TRUE, update =
 ```{r}
 remotes::install_github("saiemgilani/hoopR")
 ```
+
+
+
+
 
 
 ```{r}
