@@ -530,6 +530,24 @@ nba_historical_player_clutch_data$Season_Type <- "Regular Season"
 
 
 
+```{r}
+Basic Possession Formula=0.96*[(Field Goal Attempts)+(Turnovers)+0.44*(Free Throw Attempts)-(Offensive Rebounds)]
+```
+
+```{r}
+BPF <- 0.96*(new_team_csv$FGA)+(new_team_csv$TOV) + 0.44*(new_team_csv$FTA)-new_team_csv$OREB
+```
+
+```{r}
+BPF
+```
+
+
+
+```{r}
+glimpse(team_new_df_list2)
+```
+
 
 
 ## Player Clutch Playoffs 2011-12 to 2021-22
@@ -673,13 +691,34 @@ player_new_df_list2 %>%
 
 
 
-
 ```{r}
-
+Basic Possession Formula=0.96*[(new_tea)+(Turnovers)+0.44*(Free Throw Attempts)-(Offensive Rebounds)]
 ```
 
 
 
+
+```{r}
+new_df_csv <- read.csv("https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Player_Clutch_Data.csv")
+head(new_df_csv)
+```
+
+```{r}
+new_team_csv <- read.csv("https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Team_Clutch_Data.csv")
+head(new_team_csv)
+```
+
+```{r}
+glimpse(new_team_csv)
+```
+
+
+
+
+
+```{r}
+glimpse(new_team_csv)
+```
 
 
 ```{r}
