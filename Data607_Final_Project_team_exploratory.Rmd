@@ -12,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ## Load Packages
 ```{r}
 library(tidyverse)
+library(magrittr)
+
 library(hoopR)
 
 # You can install using the pacman package using the following code:
@@ -561,67 +563,67 @@ player_clutch_playoffs12 <- nba_leaguedashplayerclutch(season = "2011-12", seaso
 player_clutch_playoffs12 <- data.frame(player_clutch_playoffs12, check.names = FALSE)
 player_clutch_playoffs12 <- player_clutch_playoffs12 %>%
   rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
-player_clutch_playoffs12$Year <- "2011-12"
+player_clutch_playoffs12$player_season <- "2011-12"
 
 player_clutch_playoffs13 <- nba_leaguedashplayerclutch(season = "2012-13", season_type = "Playoffs")
 player_clutch_playoffs13 <- data.frame(player_clutch_playoffs13, check.names = FALSE)
 player_clutch_playoffs13 <- player_clutch_playoffs13 %>%
   rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
-player_clutch_playoffs13$Year <- "2012-13"
+player_clutch_playoffs13$player_season <- "2012-13"
 
 player_clutch_playoffs14 <- nba_leaguedashplayerclutch(season = "2013-14", season_type = "Playoffs")
 player_clutch_playoffs14 <- data.frame(player_clutch_playoffs14, check.names = FALSE)
 player_clutch_playoffs14 <- player_clutch_playoffs14 %>%
   rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
-player_clutch_playoffs14$Year <- "2013-14"
+player_clutch_playoffs14$player_season <- "2013-14"
 
 player_clutch_playoffs15 <- nba_leaguedashplayerclutch(season = "2014-15", season_type = "Playoffs")
 player_clutch_playoffs15 <- data.frame(player_clutch_playoffs15, check.names = FALSE)
 player_clutch_playoffs15 <- player_clutch_playoffs15 %>%
   rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
-player_clutch_playoffs15$Year <- "2014-15"
+player_clutch_playoffs15$player_season <- "2014-15"
 
 player_clutch_playoffs16 <- nba_leaguedashplayerclutch(season = "2015-16", season_type = "Playoffs")
 player_clutch_playoffs16 <- data.frame(player_clutch_playoffs16, check.names = FALSE)
 player_clutch_playoffs16 <- player_clutch_playoffs16 %>%
   rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
-player_clutch_playoffs16$Year <- "2015-16"
+player_clutch_playoffs16$player_season <- "2015-16"
 
 player_clutch_playoffs17 <- nba_leaguedashplayerclutch(season = "2016-17", season_type = "Playoffs")
 player_clutch_playoffs17 <- data.frame(player_clutch_playoffs17, check.names = FALSE)
 player_clutch_playoffs17 <- player_clutch_playoffs17 %>%
   rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
-player_clutch_playoffs17$Year <- "2016-17"
+player_clutch_playoffs17$player_season <- "2016-17"
 
 player_clutch_playoffs18 <- nba_leaguedashplayerclutch(season = "2017-18", season_type = "Playoffs")
 player_clutch_playoffs18 <- data.frame(player_clutch_playoffs18, check.names = FALSE)
 player_clutch_playoffs18 <- player_clutch_playoffs18 %>%
   rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
-player_clutch_playoffs18$Year <- "2017-18"
+player_clutch_playoffs18$player_season <- "2017-18"
 
 player_clutch_playoffs19 <- nba_leaguedashplayerclutch(season = "2018-19", season_type = "Playoffs")
 player_clutch_playoffs19 <- data.frame(player_clutch_playoffs19, check.names = FALSE)
 player_clutch_playoffs19 <- player_clutch_playoffs19 %>%
   rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
-player_clutch_playoffs19$Year <- "2018-19"
+player_clutch_playoffs19$player_season <- "2018-19"
 
 player_clutch_playoffs20 <- nba_leaguedashplayerclutch(season = "2019-20", season_type = "Playoffs")
 player_clutch_playoffs20 <- data.frame(player_clutch_playoffs20, check.names = FALSE)
 player_clutch_playoffs20 <- player_clutch_playoffs12 %>%
   rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
-player_clutch_playoffs20$Year <- "2019-20"
+player_clutch_playoffs20$player_season <- "2019-20"
 
 player_clutch_playoffs21 <- nba_leaguedashplayerclutch(season = "2020-21", season_type = "Playoffs")
 player_clutch_playoffs21 <- data.frame(player_clutch_playoffs21, check.names = FALSE)
 player_clutch_playoffs21 <- player_clutch_playoffs21 %>%
   rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
-player_clutch_playoffs21$Year <- "2020-21"
+player_clutch_playoffs21$player_season <- "2020-21"
 
 player_clutch_playoffs22 <- nba_leaguedashplayerclutch(season = "2021-22", season_type = "Playoffs")
 player_clutch_playoffs22 <- data.frame(player_clutch_playoffs22, check.names = FALSE)
 player_clutch_playoffs22 <- player_clutch_playoffs22 %>%
   rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
-player_clutch_playoffs22$Year <- "2021-22"
+player_clutch_playoffs22$player_season <- "2021-22"
 
 # merge all data
 df_list = list(player_clutch_playoffs12, player_clutch_playoffs13, 
@@ -646,9 +648,9 @@ nba_all_playerclutch_data <- rbind(player_new_df_list, nba_historical_player_clu
 path_csv <- getwd()
 path_csv2 <- getwd()
 path_csv3 <- getwd()
-write.csv(nba_all_clutch_data, file.path(path_csv, "Team_Clutch_Data.csv"))
+write.csv(nba_all_teamclutch_data, file.path(path_csv, "Team_Clutch_Data.csv"))
 write.csv(nba_all_playerclutch_data, file.path(path_csv2, "Player_Clutch_Data.csv"))
-write.csv(historical_team_stat, file.path(path_csv3, "Team_Stat_Regular_Season_Datat.csv"))
+write.csv(nba_historical_team_data, file.path(path_csv3, "Team_Stat_Regular_Season_Datat.csv"))
 ```
 
 
