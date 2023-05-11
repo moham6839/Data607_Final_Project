@@ -399,6 +399,7 @@ playoff_performers <- playoff_season_player_dataset %>%
   select(PLAYER_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS) %>%
   group_by(PLAYER_NAME) %>%
   summarise(total_plus_minus = sum(PLUS_MINUS),
+  total_points = sum(PTS)
   total_wins = sum(W),
   total_fgm = sum(FGM),
   total_fga = sum(FGA),
