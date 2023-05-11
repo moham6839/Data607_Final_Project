@@ -19,10 +19,10 @@ head(nba_team_dataset, 1000)
 ```
 
 ```{r}
-# calculate the team possesion and offensive effiency
+# calculate the team possession and offensive efficiency
 nba_team_dataset <- nba_team_dataset %>%
-  mutate(team_possession = 0.96*(nba_team_dataset$FGA)+(nba_team_dataset$TOV) + 0.44*(nba_team_dataset$FTA)-nba_team_dataset$OREB) %>%
-  mutate(team_off = 100*(nba_team_dataset$PTS/nba_team_dataset$team_possession))
+  mutate(team_possession = (0.96*FGA)+ TOV + (0.44*FTA)-OREB) %>%
+  mutate(team_off = 100*(PTS/team_possession)) 
 
 head(nba_team_dataset)
 ```
@@ -30,13 +30,17 @@ head(nba_team_dataset)
 ```{r}
 # split the dataset into regular season and playoff seasons
 regular_season_dataset <- nba_team_dataset %>%
-  filter(Season_Type == "Regular Season")
+  filter(Season_Type == "Regular Season") %>%
+  group_by(TEAM_NAME)
+
+head(regular_season_dataset)
 
 playoff_season_dataset <- nba_team_dataset %>%
   filter(Season_Type == "Playoffs")
 ```
 
-
+```{r}
+```
 
 
 
