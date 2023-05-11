@@ -9,82 +9,31 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ```
 
+## Load Packages
 ```{r}
 library(tidyverse)
 library(nbastatR)
 library(hoopR)
-```
 
-
-```{r}
-library(future)
-#game_logs(seasons = 2010:2023)
-```
-
-```{r}
-Sys.setenv("VROOM_CONNECTION_SIZE" = 131072 * 2)
-```
-
-```{r}
-if(!require('nbastatR')) {
-    install.packages('nbastatR')
-    library('nbastatR')
-}
-```
-
-```{r}
-
-# Access the game tables for a particular season
-gamedata <- game_logs(seasons = 2010:2023)
-
-# Take a quick look at the data
-head(gamedata)
-```
-
-```{r}
-glimpse(gamedata)
-```
-
-```{r}
-teams <- teams_details(all_teams = TRUE)
-```
-
-
-```{r}
-unnest(teams)
-```
-
-```{r}
-ls("package:nbastatR")
-```
-
-```{r}
-team_playoffs <- teams_players_stats(seasons = 2010:2023, season_types = 'Playoffs')
-```
-
-```{r}
-unnest(team_playoffs)
-```
-
-```{r}
 # You can install using the pacman package using the following code:
 if (!requireNamespace('pacman', quietly = TRUE)){
   install.packages('pacman')
 }
 pacman::p_load_current_gh("sportsdataverse/hoopR", dependencies = TRUE, update = TRUE)
-```
 
-
-
-```{r}
+#remote install if necessary
 remotes::install_github("saiemgilani/hoopR")
 ```
 
 
+<<<<<<< HEAD
 
 
 
 
+=======
+## Regular Season
+>>>>>>> 02ae53823a79c0038bb2e35db1d696cc8079c897
 ```{r}
 # extract clutch stat from regular season starting from 2001
 tc_data_01 <- nba_leaguedashteamclutch(season = "2001-02", season_type = "Regular Season")
@@ -216,7 +165,7 @@ tc_data_21 <- tc_data_21 %>%
   add_column(player_season = "2021-21")
 
 #merge all data
-nba_historical_clutch_list <- list(tc_data_2000_01, tc_data_2001_02, tc_data_2002_03, tc_data_2003_04, tc_data_2004_05, tc_data_2005_06, tc_data_2006_07, tc_data_2007_08, tc_data_2008_09, tc_data_2009_10, tc_data_2010_11, tc_data_2011_12, tc_data_2012_13, tc_data_2013_14, tc_data_2014_15, tc_data_2015_16, tc_data_2016_17, tc_data_2017_18, tc_data_2018_19, tc_data_2019_20, tc_data_2020_21)
+nba_historical_clutch_list <- list(tc_data_01, tc_data_02, tc_data_03, tc_data_04, tc_data_05, tc_data_06, tc_data_07, tc_data_08, tc_data_09, tc_data_10, tc_data_11, tc_data_12, tc_data_13, tc_data_14, tc_data_15, tc_data_16, tc_data_17, tc_data_18, tc_data_19, tc_data_20)
 
 nba_historical_clutch_data <- Reduce(
   function(x,y, ...) merge(x,y, all=TRUE, ...), nba_historical_clutch_list)
@@ -299,291 +248,335 @@ nba_historical_player_clutch_list <- list(tc_playerdata_11, tc_playerdata_12, tc
 nba_historical_player_clutch_data <- Reduce(
   function(x,y, ...) merge(x,y, all=TRUE, ...), nba_historical_player_clutch_list)
 
-
 ```
 
-```{r}
-nba_playerdashboardbygeneralsplits()
-```
-
-
-```{r}
-nba_playerdashboardbyshootingsplits()
-```
+## Team Clutch Playoffs 2001-02 to 2021-22
 
 
 
 ```{r}
-nba_playerdashboardbyteamperformance()
+team_clutch_playoffs02 <- nba_leaguedashteamclutch(season = "2001-02", season_type = "Playoffs")
+team_clutch_playoffs02 <- data.frame(team_clutch_playoffs02, check.names = FALSE)
+team_clutch_playoffs02 <- team_clutch_playoffs02 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs02$Year <- "2001-02"
 ```
 
 
 ```{r}
-nba_playerdashboardbyyearoveryear()
-```
-
-
-```{r}
-clutch_stats <- nba_leaguedashplayerclutch(season_type = "Playoffs")
-```
-
-```{r}
-clutch_stats
-```
-
-
-```{r}
-ls("package:nbastatR")
-```
-
-
-```{r}
-nba_stats <- nba_stats_api_items()
-```
-
-```{r}
-unnest(nba_stats)
-```
-
-```{r}
-ls("package:hoopR")
-```
-
-
-```{r}
-nba_hustlestatsboxscore()
-```
-
-
-```{r}
-player_team <- teams_players_stats()
-```
-
-```{r}
-player_team
+team_clutch_playoffs03 <- nba_leaguedashteamclutch(season = "2002-03", season_type = "Playoffs")
+team_clutch_playoffs03 <- data.frame(team_clutch_playoffs03, check.names = FALSE)
+team_clutch_playoffs03 <- team_clutch_playoffs03 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs03$Year <- "2002-03"
 ```
 
 
 
 ```{r}
-nba_leaguestandings()
+team_clutch_playoffs04 <- nba_leaguedashteamclutch(season = "2003-04", season_type = "Playoffs")
+team_clutch_playoffs04 <- data.frame(team_clutch_playoffs04, check.names = FALSE)
+team_clutch_playoffs04 <- team_clutch_playoffs04 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs04$Year <- "2003-04"
 ```
 
 
 ```{r}
-teams_shots(teams = "Brooklyn Nets",
-seasons = 2018)
-```
-
-
-
-```{r}
-teams_players_stats()
-```
-
-
-```{r}
-bref_players_stats(seasons = 2000:2023)
+team_clutch_playoffs05 <- nba_leaguedashteamclutch(season = "2004-05", season_type = "Playoffs")
+team_clutch_playoffs05 <- data.frame(team_clutch_playoffs05, check.names = FALSE)
+team_clutch_playoffs05 <- team_clutch_playoffs05 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs05$Year <- "2004-05"
 ```
 
 
 ```{r}
-bref_teams_stats(
-  seasons = 2019,
-  return_message = TRUE,
-  assign_to_environment = TRUE,
-  nest_data = FALSE,
-  join_data = TRUE,
-  widen_data = TRUE
-)
-
+team_clutch_playoffs06 <- nba_leaguedashteamclutch(season = "2005-06", season_type = "Playoffs")
+team_clutch_playoffs06 <- data.frame(team_clutch_playoffs06)
+team_clutch_playoffs06 <- team_clutch_playoffs06 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs06$Year <- "2005-06"
 ```
 
 
 ```{r}
-nba_teamestimatedmetrics()
+team_clutch_playoffs07 <- nba_leaguedashteamclutch(season = "2006-07", season_type = "Playoffs")
+team_clutch_playoffs07 <- data.frame(team_clutch_playoffs07, check.names = FALSE)
+team_clutch_playoffs07 <- team_clutch_playoffs07 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs07$Year <- "2006-07"
 ```
 
 
 ```{r}
-team_log <- nba_teamdashboardbyclutch()
+team_clutch_playoffs08 <- nba_leaguedashteamclutch(season = "2007-08", season_type = "Playoffs")
+team_clutch_playoffs08 <- data.frame(team_clutch_playoffs08, check.names = FALSE)
+team_clutch_playoffs08 <- team_clutch_playoffs08 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs08$Year <- "2007-08"
 ```
 
 
 ```{r}
-team_log
+team_clutch_playoffs09 <- nba_leaguedashteamclutch(season = "2008-09", season_type = "Playoffs")
+team_clutch_playoffs09 <- data.frame(team_clutch_playoffs09, check.names = FALSE)
+team_clutch_playoffs09 <- team_clutch_playoffs09 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs09$Year <- "2008-09"
 ```
 
 
 ```{r}
-clutch_player <- nba_playerdashboardbyclutch()
-```
-
-
-```{r}
-clutch_player
-```
-
-
-```{r}
-ls("package:hoopR")
-```
-
-```{r}
-bref_teams_stats()
-```
-
-```{r}
-ls("package:hoopR")
-```
-
-```{r}
-ls("package:nbastatR")
-```
-
-```{r}
-# Get the game IDs from the past 3 seasons
-# Select seasons from 2018-2020 because it's the recent ones
-selectedSeasons <- c(2018:2020)
-
-# Get game IDs for Regular Season and Playoffs
-gameIds_Reg <- suppressWarnings(seasons_schedule(seasons = selectedSeasons, season_types = "Regular Season") %>% select(idGame, slugMatchup))
-```
-
-
-```{r}
-teams_shots(teams = "New York", seasons = 2022)
-```
-
-```{r}
-season2023 <- bref_teams_stats(seasons = 2023)
-head(season2023)
-```
-
-
-```{r}
-season2023 <- unnest(season2023)
-```
-
-```{r}
-glimpse(season2023)
-```
-
-
-```{r}
-season2023
-```
-
-```{r}
-clutch <- nba_playerdashboardbyclutch(season_type = "Playoffs")
-```
-
-```{r}
-ls("package:hoopR")
-```
-
-```{r}
-nba_playerdashboardbyclutch()
-```
-
-```{r}
-nba_leaguedashteamclutch()
-```
-
-
-```{r}
-nba_leaguedashteamstats()
-```
-
-
-
-
-```{r}
-player_clutch_rs <- nba_leaguedashplayerclutch(season_type = "Regular Season")
-player_clutch_playoffs <- nba_leaguedashplayerclutch(season_type = "Playoffs")
-```
-
-```{r}
-player_clutch_rs
-```
-```{r}
-ls("package:hoopR")
+team_clutch_playoffs10 <- nba_leaguedashteamclutch(season = "2009-10", season_type = "Playoffs")
+team_clutch_playoffs10 <- data.frame(team_clutch_playoffs10, check.names = FALSE)
+team_clutch_playoffs10 <- team_clutch_playoffs10 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs10$Year <- "2009-10"
 ```
 
 
 
 ```{r}
-nba_teamplayeronoffdetails()
+team_clutch_playoffs11 <- nba_leaguedashteamclutch(season = "2010-11", season_type = "Playoffs")
+team_clutch_playoffs11 <- data.frame(team_clutch_playoffs11, check.names = FALSE)
+team_clutch_playoffs11 <- team_clutch_playoffs11 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs11$Year <- "2010-11"
 ```
 
 
 ```{r}
-player_reg_season <- nba_leaguedashplayerstats(season_type = "Regular Season")
-player_playoffs <- nba_leaguedashplayerstats(season_type = "Playoffs")
-```
-
-```{r}
-summary(player_reg_season)
-```
-
-```{r}
-new_df <- data.frame(player_reg_season, check.names = FALSE)
+team_clutch_playoffs12 <- nba_leaguedashteamclutch(season = "2011-12", season_type = "Playoffs")
+team_clutch_playoffs12 <- data.frame(team_clutch_playoffs12, check.names = FALSE)
+team_clutch_playoffs12 <- team_clutch_playoffs12 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs12$Year <- "2011-12"
 ```
 
 
 ```{r}
-summary(new_df)
+team_clutch_playoffs13 <- nba_leaguedashteamclutch(season = "2012-13", season_type = "Playoffs")
+team_clutch_playoffs13 <- data.frame(team_clutch_playoffs13, check.names = FALSE)
+team_clutch_playoffs13 <- team_clutch_playoffs13 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs13$Year <- "2012-13"
 ```
 
 
 ```{r}
-nba_leaguedashplayerptshot()
+team_clutch_playoffs14 <- nba_leaguedashteamclutch(season = "2013-14", season_type = "Playoffs")
+team_clutch_playoffs14 <- data.frame(team_clutch_playoffs14, check.names = FALSE)
+team_clutch_playoffs14 <- team_clutch_playoffs14 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs14$Year <- "2013-14"
 ```
 
+```{r}
+team_clutch_playoffs15 <- nba_leaguedashteamclutch(season = "2014-15", season_type = "Playoffs")
+team_clutch_playoffs15 <- data.frame(team_clutch_playoffs15, check.names = FALSE)
+team_clutch_playoffs15 <- team_clutch_playoffs15 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs15$Year <- "2014-15"
+```
 
+```{r}
+team_clutch_playoffs16 <- nba_leaguedashteamclutch(season = "2015-16", season_type = "Playoffs")
+team_clutch_playoffs16 <- data.frame(team_clutch_playoffs16, check.names = FALSE)
+team_clutch_playoffs16 <- team_clutch_playoffs16 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs16$Year <- "2015-16"
+```
+
+```{r}
+team_clutch_playoffs17 <- nba_leaguedashteamclutch(season = "2016-17", season_type = "Playoffs")
+team_clutch_playoffs17 <- data.frame(team_clutch_playoffs17, check.names = FALSE)
+team_clutch_playoffs17 <- team_clutch_playoffs17 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs17$Year <- "2016-17"
+```
+
+```{r}
+team_clutch_playoffs18 <- nba_leaguedashteamclutch(season = "2017-18", season_type = "Playoffs")
+team_clutch_playoffs18 <- data.frame(team_clutch_playoffs18, check.names = FALSE)
+team_clutch_playoffs18 <- team_clutch_playoffs18 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs18$Year <- "2017-18"
+```
+
+```{r}
+team_clutch_playoffs19 <- nba_leaguedashteamclutch(season = "2018-19", season_type = "Playoffs")
+team_clutch_playoffs19 <- data.frame(team_clutch_playoffs19, check.names = FALSE)
+team_clutch_playoffs19 <- team_clutch_playoffs19 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs19$Year <- "2018-19"
+```
+
+```{r}
+team_clutch_playoffs20 <- nba_leaguedashteamclutch(season = "2019-20", season_type = "Playoffs")
+team_clutch_playoffs20 <- data.frame(team_clutch_playoffs20, check.names = FALSE)
+team_clutch_playoffs20 <- team_clutch_playoffs20 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs20$Year <- "2019-20"
+```
+
+```{r}
+team_clutch_playoffs21 <- nba_leaguedashteamclutch(season = "2020-21", season_type = "Playoffs")
+team_clutch_playoffs21 <- data.frame(team_clutch_playoffs21, check.names = FALSE)
+team_clutch_playoffs21 <- team_clutch_playoffs21 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs21$Year <- "2020-21"
+```
+
+```{r}
+team_clutch_playoffs22 <- nba_leaguedashteamclutch(season = "2021-22", season_type = "Playoffs")
+team_clutch_playoffs22 <- data.frame(team_clutch_playoffs22, check.names = FALSE)
+team_clutch_playoffs22 <- team_clutch_playoffs22 %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE))
+team_clutch_playoffs22$Year <- "2021-22"
+```
 
 
 ```{r}
-#####################
-## Get game IDs
-#####################
-# Select seasons from 1949 and after
-selectedSeasons <- c(1996:1998)
-# Get game IDs for Regular Season and Playoffs
-gameIds_Reg <- suppressWarnings(seasons_schedule(seasons = selectedSeasons, season_types = "Regular Season") %>% select(idGame, slugMatchup))
-gameIds_PO <- suppressWarnings(seasons_schedule(seasons = selectedSeasons, season_types = "Playoffs") %>% select(idGame, slugMatchup))
-gameIds_all <- rbind(gameIds_Reg, gameIds_PO)
+team_df_list = list(team_clutch_playoffs02, team_clutch_playoffs03, 
+               team_clutch_playoffs04, team_clutch_playoffs05,
+               team_clutch_playoffs06, team_clutch_playoffs07,
+               team_clutch_playoffs08, team_clutch_playoffs09, 
+               team_clutch_playoffs10, team_clutch_playoffs11,
+               team_clutch_playoffs12, team_clutch_playoffs13,
+               team_clutch_playoffs14, team_clutch_playoffs15,
+               team_clutch_playoffs16, team_clutch_playoffs17,
+               team_clutch_playoffs18, team_clutch_playoffs19, 
+               team_clutch_playoffs20, team_clutch_playoffs21,
+               team_clutch_playoffs22)
 
-# Peek at the game IDs
-head(gameIds_all)
-tail(gameIds_all)
 
-#####################
-## Retrieve gamelog data for players and teams
-#####################
-# Get player gamelogs
-P_gamelog_reg <- suppressWarnings(game_logs(seasons = selectedSeasons, league = "NBA", result_types = "player", season_types = "Regular Season"))
-P_gamelog_po <- suppressWarnings(game_logs(seasons = selectedSeasons, league = "NBA", result_types = "player", season_types = "Playoffs"))
-P_gamelog_all <- rbind(P_gamelog_reg, P_gamelog_po)
-View(head(P_gamelog_all))
 
-# Get team gamelogs
-T_gamelog_reg <- suppressWarnings(game_logs(seasons = selectedSeasons, league = "NBA", result_types = "team", season_types = "Regular Season"))
-T_gamelog_po <- suppressWarnings(game_logs(seasons = selectedSeasons, league = "NBA", result_types = "team", season_types = "Playoffs"))
-T_gamelog_all <- rbind(T_gamelog_reg, T_gamelog_po)
-View(head(T_gamelog_all))
+team_new_df_list <- Reduce(
+  function(x,y, ...) merge(x,y, all=TRUE, ...), team_df_list)
+#team_new_df_list$Season_Type <- "Playoffs"
+team_new_df_list
 ```
 
+## Player Clutch 2011-12 to 2021-22
 
+```{r}
+player_clutch_playoffs12 <- nba_leaguedashplayerclutch(season = "2011-12", season_type = "Playoffs")
+player_clutch_playoffs13 <- nba_leaguedashplayerclutch(season = "2012-13", season_type = "Playoffs")
+player_clutch_playoffs14 <- nba_leaguedashplayerclutch(season = "2013-14", season_type = "Playoffs")
+player_clutch_playoffs15 <- nba_leaguedashplayerclutch(season = "2014-15", season_type = "Playoffs")
+player_clutch_playoffs16 <- nba_leaguedashplayerclutch(season = "2015-16", season_type = "Playoffs")
+player_clutch_playoffs17 <- nba_leaguedashplayerclutch(season = "2016-17", season_type = "Playoffs")
+player_clutch_playoffs18 <- nba_leaguedashplayerclutch(season = "2017-18", season_type = "Playoffs")
+player_clutch_playoffs19 <- nba_leaguedashplayerclutch(season = "2018-19", season_type = "Playoffs")
+player_clutch_playoffs20 <- nba_leaguedashplayerclutch(season = "2019-20", season_type = "Playoffs")
+player_clutch_playoffs21 <- nba_leaguedashplayerclutch(season = "2020-21", season_type = "Playoffs")
+player_clutch_playoffs22 <- nba_leaguedashplayerclutch(season = "2021-22", season_type = "Playoffs")
+```
 
+```{r}
+player_clutch_playoffs12 <- nba_leaguedashplayerclutch(season = "2011-12", season_type = "Playoffs")
+player_clutch_playoffs12 <- data.frame(player_clutch_playoffs12, check.names = FALSE)
+player_clutch_playoffs12 <- player_clutch_playoffs12 %>%
+  rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
+player_clutch_playoffs12$Year <- "2011-12"
+```
 
+```{r}
+player_clutch_playoffs13 <- nba_leaguedashplayerclutch(season = "2012-13", season_type = "Playoffs")
+player_clutch_playoffs13 <- data.frame(player_clutch_playoffs13, check.names = FALSE)
+player_clutch_playoffs13 <- player_clutch_playoffs13 %>%
+  rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
+player_clutch_playoffs13$Year <- "2012-13"
+```
 
+```{r}
+player_clutch_playoffs14 <- nba_leaguedashplayerclutch(season = "2013-14", season_type = "Playoffs")
+player_clutch_playoffs14 <- data.frame(player_clutch_playoffs14, check.names = FALSE)
+player_clutch_playoffs14 <- player_clutch_playoffs14 %>%
+  rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
+player_clutch_playoffs14$Year <- "2013-14"
+```
+
+```{r}
+player_clutch_playoffs15 <- nba_leaguedashplayerclutch(season = "2014-15", season_type = "Playoffs")
+player_clutch_playoffs15 <- data.frame(player_clutch_playoffs15, check.names = FALSE)
+player_clutch_playoffs15 <- player_clutch_playoffs15 %>%
+  rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
+player_clutch_playoffs15$Year <- "2014-15"
+```
+
+```{r}
+player_clutch_playoffs16 <- nba_leaguedashplayerclutch(season = "2015-16", season_type = "Playoffs")
+player_clutch_playoffs16 <- data.frame(player_clutch_playoffs16, check.names = FALSE)
+player_clutch_playoffs16 <- player_clutch_playoffs16 %>%
+  rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
+player_clutch_playoffs16$Year <- "2015-16"
+```
+
+```{r}
+player_clutch_playoffs17 <- nba_leaguedashplayerclutch(season = "2016-17", season_type = "Playoffs")
+player_clutch_playoffs17 <- data.frame(player_clutch_playoffs17, check.names = FALSE)
+player_clutch_playoffs17 <- player_clutch_playoffs17 %>%
+  rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
+player_clutch_playoffs17$Year <- "2016-17"
+```
+
+```{r}
+player_clutch_playoffs18 <- nba_leaguedashplayerclutch(season = "2017-18", season_type = "Playoffs")
+player_clutch_playoffs18 <- data.frame(player_clutch_playoffs18, check.names = FALSE)
+player_clutch_playoffs18 <- player_clutch_playoffs18 %>%
+  rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
+player_clutch_playoffs18$Year <- "2017-18"
+```
+
+```{r}
+player_clutch_playoffs19 <- nba_leaguedashplayerclutch(season = "2018-19", season_type = "Playoffs")
+player_clutch_playoffs19 <- data.frame(player_clutch_playoffs19, check.names = FALSE)
+player_clutch_playoffs19 <- player_clutch_playoffs19 %>%
+  rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
+player_clutch_playoffs19$Year <- "2018-19"
+```
+
+```{r}
+player_clutch_playoffs20 <- nba_leaguedashplayerclutch(season = "2019-20", season_type = "Playoffs")
+player_clutch_playoffs20 <- data.frame(player_clutch_playoffs20, check.names = FALSE)
+player_clutch_playoffs20 <- player_clutch_playoffs12 %>%
+  rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
+player_clutch_playoffs20$Year <- "2019-20"
+```
 
 
 ```{r}
-p <- ggpairs(poverty[,c(2:6)], lower = list(continuous = wrap("smooth", se=FALSE, alpha = 0.7, size=0.5)))
-p[5,3] <- p[5,3] + theme(panel.border = element_rect(color = 'blue', fill = NA, size = 2))
-p[3,5] <- p[3,5] + theme(panel.border = element_rect(color = 'blue', fill = NA, size = 2))
-p
+player_clutch_playoffs21 <- nba_leaguedashplayerclutch(season = "2020-21", season_type = "Playoffs")
+player_clutch_playoffs21 <- data.frame(player_clutch_playoffs21, check.names = FALSE)
+player_clutch_playoffs21 <- player_clutch_playoffs21 %>%
+  rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
+player_clutch_playoffs21$Year <- "2020-21"
 ```
 
+
+```{r}
+player_clutch_playoffs22 <- nba_leaguedashplayerclutch(season = "2021-22", season_type = "Playoffs")
+player_clutch_playoffs22 <- data.frame(player_clutch_playoffs22, check.names = FALSE)
+player_clutch_playoffs22 <- player_clutch_playoffs22 %>%
+  rename_with(~ gsub("LeagueDashPlayerClutch.", "",.x, fixed=TRUE))
+player_clutch_playoffs22$Year <- "2021-22"
+```
+
+
+```{r}
+df_list = list(player_clutch_playoffs12, player_clutch_playoffs13, 
+               player_clutch_playoffs14, player_clutch_playoffs15,
+               player_clutch_playoffs16, player_clutch_playoffs17,
+               player_clutch_playoffs18, player_clutch_playoffs19, 
+               player_clutch_playoffs20, player_clutch_playoffs21,
+               player_clutch_playoffs22)
+
+
+
+player_new_df_list <- Reduce(
+  function(x,y, ...) merge(x,y, all=TRUE, ...), df_list)
+#player_new_df_list$Season_Type <- "Playoffs"
+player_new_df_list
+```
