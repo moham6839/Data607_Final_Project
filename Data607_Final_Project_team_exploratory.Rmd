@@ -1,6 +1,6 @@
 ---
 title: "Data 607 Final Project"
-author: "Mohamed Hassan-El Serafi & Eddie Xu"
+author: "Mohamed Hassan-El Serafi and Eddie Xu"
 date: "2023-04-29"
 output: html_document
 ---
