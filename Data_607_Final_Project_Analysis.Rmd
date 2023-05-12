@@ -72,7 +72,7 @@ regular_season_dataset %>%
 playoff_season_dataset %>% 
   ggplot(aes(x=`W`)) +
   geom_histogram(bins = 10) +
-  labs(title="Amount of Win for Each Player",
+  labs(title="Amount of Wins for Each Player",
        x="Number of Wins",
        y="Count")
 ```
@@ -160,9 +160,11 @@ autoplot(rs_team_lm3)
 
 ```{r}
 team_rs_clutch <- regular_season_dataset %>%
-  select(TEAM_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W) %>%
+  select(TEAM_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS) %>%
   group_by(TEAM_NAME) %>%
   summarise(total_pm = sum(PLUS_MINUS),
+  total_points = sum(PTS),
+  
   total_fgpct = sum(FGM)/sum(FGA),
   total_fg3pct = sum(`FG3M`)/sum(`FG3A`),
   win_pct = sum(W)/sum(GP),
@@ -172,6 +174,26 @@ team_rs_clutch <- regular_season_dataset %>%
 ```
 
 
+```{r}
+team_rs_clutch <- regular_season_dataset %>%
+  select(TEAM_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS, REB) %>%
+  group_by(TEAM_NAME) %>%
+  summarise(total_pm = sum(PLUS_MINUS),
+  points_per_game = sum(PTS)/sum(GP),
+  total_games = sum(GP),
+  total_wins = sum(W),
+  total_points = sum(PTS),
+  total_rebounds = sum(REB),
+  total_fgm = sum(FGM),
+  total_fga = sum(FGA),
+  total_fgpct = sum(FGM)/sum(FGA),
+  total_fg3pct = sum(`FG3M`)/sum(`FG3A`),
+  win_pct = sum(W)/sum(GP),
+  ft_pct = sum(FTM)/sum(FTA)
+  ) %>%
+  arrange(desc(total_pm), win_pct)
+team_rs_clutch
+```
 
 
 
@@ -186,6 +208,9 @@ ggplot(data=team_rs_clutch, aes(x=reorder(TEAM_NAME, -win_pct), y=win_pct, fill=
 ```
 
 
+```{r}
+
+```
 
 
 
@@ -249,6 +274,7 @@ team_playoff_clutch <- playoff_season_dataset %>%
   win_pct = sum(W)/sum(GP),
   ft_pct = sum(FTM)/sum(FTA)
   ) %>%
+  # using filter to remove outlier
   filter(win_pct < 0.8) %>%
   arrange(desc(total_pm), win_pct)
 team_playoff_clutch
@@ -298,13 +324,19 @@ regular_season_player_dataset
 
 
 
+
+
+
 ```{r}
 rs_clutch_player <- regular_season_player_dataset %>%
-  select(PLAYER_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS) %>%
+  select(PLAYER_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS, REB) %>%
   group_by(PLAYER_NAME) %>%
   summarise(total_pm = sum(PLUS_MINUS),
-  total_points = sum(PTS),
+  points_per_game = sum(PTS)/sum(GP),
+  total_games = sum(GP),
   total_wins = sum(W),
+  total_points = sum(PTS),
+  total_rebounds = sum(REB),
   total_fgm = sum(FGM),
   total_fga = sum(FGA),
   total_fgpct = sum(FGM)/sum(FGA),
@@ -317,26 +349,9 @@ rs_clutch_player
 ```
 
 
-
 ```{r}
-rs_clutch_player <- regular_season_player_dataset %>%
-  select(PLAYER_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS) %>%
-  group_by(PLAYER_NAME) %>%
-  summarise(total_pm = sum(PLUS_MINUS),
-  total_wins = sum(W),
-  total_points = sum(PTS),
-  total_fgm = sum(FGM),
-  total_fga = sum(FGA),
-  total_fgpct = sum(FGM)/sum(FGA),
-  total_fg3pct = sum(`FG3M`)/sum(`FG3A`),
-  win_pct = sum(W)/sum(GP),
-  ft_pct = sum(FTM)/sum(FTA)
-  ) %>%
-  arrange(desc(total_pm), win_pct)
-rs_clutch_player
+summary(rs_clutch_player)
 ```
-
-
 
 
 
@@ -396,13 +411,16 @@ playoff_season_player_dataset <- new_player_csv %>%
 
 ```{r}
 playoff_performers <- playoff_season_player_dataset %>%
-  select(PLAYER_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS) %>%
+  select(PLAYER_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS, REB) %>%
   group_by(PLAYER_NAME) %>%
   summarise(total_plus_minus = sum(PLUS_MINUS),
-  total_points = sum(PTS)
+  total_points = sum(PTS),
+  points_per_game = sum(PTS)/sum(GP),
   total_wins = sum(W),
+  total_rebounds = sum(REB),
   total_fgm = sum(FGM),
   total_fga = sum(FGA),
+  total_fg3m = sum(FG3M),
   total_fgpct = sum(FGM)/sum(FGA),
   total_fg3pct = sum(`FG3M`)/sum(`FG3A`),
   win_pct = sum(W)/sum(GP),
@@ -426,7 +444,7 @@ ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -total_plus_m
 
 
 ```{r}
-ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, win_pct), y=win_pct, fill=win_pct)) +
+ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, win_pct), y=win_pct)) +
   geom_bar(stat="identity", position="dodge") +
   coord_flip()
 ```
@@ -451,7 +469,7 @@ ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -win_pct), y=
 
 
 ```{r}
-player_lm <- lm(`win_pct` ~ `total_plus_minus` + `total_points`,  data=playoff_performers)
+player_lm <- lm(`win_pct` ~ `total_plus_minus` + `total_points` + `total_rebounds`, 'total_ data=playoff_performers)
 ```
 
 
