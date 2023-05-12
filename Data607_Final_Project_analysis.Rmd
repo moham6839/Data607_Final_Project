@@ -9,39 +9,49 @@ output: html_document
 ```{r}
 library(tidyverse)
 library(magrittr)
+library(shiny)
 ```
 
 ```{r}
 # read csv file extracted
-team_link <- "https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Team_Clutch_Data.csv"
+team_clutch_link <- "https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Team_Clutch_Data.csv"
 team_stat_link <- "https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Team_Stat_Regular_Season_Datat.csv"
-nba_teamclutch_dataset <- read_csv(team_link)
+nba_teamclutch_dataset <- read_csv(team_clutch_link)
 nba_teamstat_dataset <- read_csv(team_stat_link)
+```
+
+```{r}
+nba_teamstat_summary <- nba_teamstat_dataset %>%
+  group_by(TEAM_NAME) %>%
+  summarise(total_win = sum(W),
+            total_loss = sum(L),
+            overall_all_game = sum(GP),
+            total_plus_minus = sum(PLUS_MINUS),
+            total_fgm = sum(FGM),
+            total_fga = sum(FGA),
+            total_fg3m = sum(FG3M),
+            total_fg3a = sum(FG3A),
+            total_ftm = sum(FTM),
+            total_fta = sum(FTA),
+            total_rebound = sum(REB),
+            total_assist = sum(AST),
+            total_block = sum(BLK),
+            total_steal = sum(STL),
+            total_point = sum(PTS),
+            overall_winning_pct = total_win/overall_all_game,
+            .groups = 'drop')
+   
+# scatter plot
+ggplot(nba_teamstat_summary, aes(x = TEAM_NAME, y = overall_winning_pct)) +
+  geom_point(colour = 4) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1, size = 8))
 ```
 
 ```{r}
 head(nba_teamstat_dataset)
 ```
 
-```{r}
-head(nba_all_teamclutch_data)
-```
-
-
-```{r}
-# split the dataset into regular season and playoff seasons
-regular_season_dataset <- nba_team_dataset %>%
-  filter(Season_Type == "Regular Season") %>%
-  
-
-head(regular_season_dataset)
-
-playoff_season_dataset <- nba_team_dataset %>%
-  filter(Season_Type == "Playoffs")
-```
-
-```{r}
-```
 
 
 
