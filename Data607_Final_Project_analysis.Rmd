@@ -8,30 +8,31 @@ output: html_document
 ## Load Package
 ```{r}
 library(tidyverse)
+library(magrittr)
 ```
 
 ```{r}
 # read csv file extracted
 team_link <- "https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Team_Clutch_Data.csv"
-nba_team_dataset <- read_csv(team_link)
-
-head(nba_team_dataset, 1000)
+team_stat_link <- "https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Team_Stat_Regular_Season_Datat.csv"
+nba_teamclutch_dataset <- read_csv(team_link)
+nba_teamstat_dataset <- read_csv(team_stat_link)
 ```
 
 ```{r}
-# calculate the team possession and offensive efficiency
-nba_team_dataset <- nba_team_dataset %>%
-  mutate(team_possession = (0.96*FGA)+ TOV + (0.44*FTA)-OREB) %>%
-  mutate(team_off = 100*(PTS/team_possession)) 
-
-head(nba_team_dataset)
+head(nba_teamstat_dataset)
 ```
+
+```{r}
+head(nba_all_teamclutch_data)
+```
+
 
 ```{r}
 # split the dataset into regular season and playoff seasons
 regular_season_dataset <- nba_team_dataset %>%
   filter(Season_Type == "Regular Season") %>%
-  group_by(TEAM_NAME)
+  
 
 head(regular_season_dataset)
 
