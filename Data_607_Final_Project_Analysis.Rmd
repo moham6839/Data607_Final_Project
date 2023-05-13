@@ -7,7 +7,8 @@ output: html_document
 
 # Introduction
 
-The pressure of winning games can affect the performances of players and their respective teams. For this analysis, we will focus on the performance of players during clutch situations. Clutch is defined as a situation when the game is within 5 points in the final 5 minutes of the game. 
+The pressure of winning games can affect the performances of players and their respective teams. For this analysis, we will focus on the performance of players and teams during clutch situations, exploring how their performances are affected by pressure situations. The term "clutch" is defined as a situation when a game is within 5 points in the final 5 minutes. We will examine data that compares team clutch stats with non-clutch stats, focusing specifically on the regular season. Additionally, we will also analyze regular season and playoff clutch performances for both teams and players, respectively. The data we collected centered on 20 NBA seasons for team statistics from 2001-2002 to 2021-2022, and 10 NBA seasons for players from 2011-2012 to 2021-2022. We will use traditional statistics such as field goal and free throw percentages, win percentage, total points, and plus/minus, which measures whether the score margin increased or decreased with the team or player on the court. While there are numerous amounts of advanced stats, we will use only two metrics for this analysis: true shooting percentage, which uses field goal and free throw attempts to calculate a team and player's shooting percentages, and turnover rate, which is calculated utilizing turnovers, field goal and free throw attempts. This data was obtained using the hoopR and nbastatR libraries. 
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -45,14 +46,18 @@ playoff_season_dataset <- new_team_csv %>%
 
 
 
+
+
+
 ```{r}
 team_rs_clutch <- regular_season_dataset %>%
-  select(TEAM_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS, REB) %>%
+  select(TEAM_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS, REB, TOV) %>%
   group_by(TEAM_NAME) %>%
   summarise(total_pm = sum(PLUS_MINUS),
   points_per_game = sum(PTS)/sum(GP),
   total_games = sum(GP),
   total_wins = sum(W),
+  win_pct = sum(W)/sum(GP),
   total_points = sum(PTS),
   total_rebounds = sum(REB),
   total_fgm = sum(FGM),
@@ -60,12 +65,21 @@ team_rs_clutch <- regular_season_dataset %>%
   total_fgpct = sum(FGM)/sum(FGA),
   total_fg3pct = sum(`FG3M`)/sum(`FG3A`),
   total_ftm = sum(FTM),
-  win_pct = sum(W)/sum(GP),
-  ft_pct = sum(FTM)/sum(FTA)
+  total_fta = sum(FTA),
+  total_tov = sum(TOV),
+  ft_pct = sum(FTM)/sum(FTA),
+  #True shooting percentage: PT/(2*(FGA+0.44*FTA))
+  true_shoot_pct = total_points/(2*(total_fga+0.44*total_fta)),
+  # Turnover Rate = 100*TO/(FGA+0.44*FTA+TO)
+  tov_rate = 100*total_tov /(total_fga+0.44*total_fta+total_tov)
   ) %>%
   arrange(desc(total_pm), win_pct)
-team_rs_clutch
+DT::datatable(team_rs_clutch)
 ```
+
+
+
+
 
 
 
@@ -111,8 +125,19 @@ ggplot(data=team_rs_clutch, aes(x=reorder(TEAM_NAME, -total_points), y=total_poi
 ggplot(data=team_rs_clutch, aes(x=reorder(TEAM_NAME, -total_fgpct), y=total_fgpct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Regular Season Total Team Field Goal Percentage",
+  labs(title="NBA Regular Season Total Clutch Team Field Goal %",
        y="Field Goal Percentage",
+       x="Team") +
+  coord_flip()
+```
+
+
+```{r}
+ggplot(data=team_rs_clutch, aes(x=reorder(TEAM_NAME, -ft_pct), y=ft_pct)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Regular Season Team Clutch Free Throw %",
+       y="Free Throw %",
        x="Team") +
   coord_flip()
 ```
@@ -121,7 +146,32 @@ ggplot(data=team_rs_clutch, aes(x=reorder(TEAM_NAME, -total_fgpct), y=total_fgpc
 
 
 ```{r}
-rs_team_lm <- lm(win_pct ~ total_pm + total_ftm + total_fgm, data=team_rs_clutch)
+ggplot(data=team_rs_clutch, aes(x=reorder(TEAM_NAME, -true_shoot_pct), y=true_shoot_pct)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Regular Season Total Clutch Team True Shooting %",
+       y="True Shooting Percentage",
+       x="Team") +
+  coord_flip()
+```
+
+
+```{r}
+ggplot(data=team_rs_clutch, aes(x=reorder(TEAM_NAME, -tov_rate), y=tov_rate)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Regular Season Total Clutch Turnover Rate",
+       y="Turnover Rate",
+       x="Team") +
+  coord_flip()
+```
+
+
+
+
+
+```{r}
+rs_team_lm <- lm(win_pct ~ total_pm + true_shoot_pct + ft_pct + total_fgpct + tov_rate + total_points, data=team_rs_clutch)
 ```
 
 
@@ -130,8 +180,14 @@ summary(rs_team_lm)
 ```
 
 
+```{r}
+rs_team_lm2 <- lm(win_pct ~ total_pm, data=team_rs_clutch)
+```
 
 
+```{r}
+summary(rs_team_lm2)
+```
 
 
 
@@ -152,40 +208,33 @@ summary(rs_team_lm)
 ## Team Clutch Stats - Playoffs
 
 
-```{r}
-team_playoff_clutch <- playoff_season_dataset %>%
-  select(TEAM_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W) %>%
-  group_by(TEAM_NAME) %>%
-  summarise(total_pm = sum(PLUS_MINUS),
-  total_fgpct = sum(FGM)/sum(FGA),
-  total_fg3pct = sum(`FG3M`)/sum(`FG3A`),
-  win_pct = sum(W)/sum(GP),
-  ft_pct = sum(FTM)/sum(FTA)
-  ) %>%
-  # using filter to remove outlier
-  filter(win_pct < 0.8) %>%
-  arrange(desc(total_pm), win_pct)
-team_playoff_clutch
-```
+
+
 
 
 ```{r}
 team_playoff_clutch <- playoff_season_dataset %>%
-  select(TEAM_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS, REB) %>%
+  select(TEAM_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS, REB, TOV) %>%
   group_by(TEAM_NAME) %>%
   summarise(total_pm = sum(PLUS_MINUS),
   points_per_game = sum(PTS)/sum(GP),
   total_games = sum(GP),
   total_wins = sum(W),
+  win_pct = sum(W)/sum(GP),
   total_points = sum(PTS),
   total_rebounds = sum(REB),
   total_fgm = sum(FGM),
   total_fga = sum(FGA),
   total_fgpct = sum(FGM)/sum(FGA),
   total_fg3pct = sum(`FG3M`)/sum(`FG3A`),
-  win_pct = sum(W)/sum(GP),
   total_ftm = sum(FTM),
-  ft_pct = sum(FTM)/sum(FTA)
+  total_fta = sum(FTA),
+  total_tov = sum(TOV),
+  ft_pct = sum(FTM)/sum(FTA),
+  #True shooting percentage: PT/(2*(FGA+0.44*FTA))
+  true_shoot_pct = total_points/(2*(total_fga+0.44*total_fta)),
+  # Turnover Rate = 100*TO/(FGA+0.44*FTA+TO)
+  tov_rate = 100*total_tov /(total_fga+0.44*total_fta+total_tov)
   ) %>%
   # using filter to remove outlier
   filter(win_pct < 0.8) %>%
@@ -193,10 +242,19 @@ team_playoff_clutch <- playoff_season_dataset %>%
 team_playoff_clutch
 ```
 
+
+
+
+
+
+
+
+
+
 ```{r}
 ggplot(data=team_playoff_clutch, aes(x=reorder(TEAM_NAME, -win_pct), y=win_pct)) +
   geom_bar(stat="identity", position="dodge") +theme_minimal() +
-  labs(title="NBA Playoff Team Clutch Win Percentage",
+  labs(title="NBA Playoffs Team Clutch Win Percentage",
        y="Win Percentage",
        x="Team") +
   coord_flip()
@@ -220,11 +278,24 @@ ggplot(data=team_playoff_clutch, aes(x=reorder(TEAM_NAME, -total_pm), y=total_pm
 ggplot(data=team_playoff_clutch, aes(x=reorder(TEAM_NAME, -total_fgpct), y=total_fgpct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Regular Season Team Clutch Field Goal Percentage",
-       y="Field Goal Percentage",
+  labs(title="NBA Playoffs Team Clutch Field Goal %",
+       y="Field Goal %",
        x="Team") +
   coord_flip()
 ```
+
+
+
+```{r}
+ggplot(data=team_playoff_clutch, aes(x=reorder(TEAM_NAME, -ft_pct), y=ft_pct)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Playoffs Team Clutch Free Throw %",
+       y="Free Throw %",
+       x="Team") +
+  coord_flip()
+```
+
 
 
 
@@ -239,13 +310,52 @@ ggplot(data=team_playoff_clutch, aes(x=reorder(TEAM_NAME, -total_points), y=tota
 ```
 
 
+
 ```{r}
-playoff_team_lm <- lm(win_pct ~ total_pm + total_ftm + total_fgm, data=team_playoff_clutch)
+ggplot(data=team_playoff_clutch, aes(x=reorder(TEAM_NAME, -true_shoot_pct), y=true_shoot_pct)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Playoffs Team Clutch True Shooting % ",
+       y="True Shooting %",
+       x="Team") +
+  coord_flip()
+```
+
+
+
+```{r}
+ggplot(data=team_playoff_clutch, aes(x=reorder(TEAM_NAME, -tov_rate), y=tov_rate)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Playoffs Team Clutch Turnover Rate",
+       y="Turnover Rate",
+       x="Team") +
+  coord_flip()
+```
+
+
+
+
+
+
+
+```{r}
+playoff_team_lm <- lm(win_pct ~ total_pm + total_fgpct+ ft_pct + true_shoot_pct + tov_rate + total_points, data=team_playoff_clutch)
 ```
 
 
 ```{r}
 summary(playoff_team_lm)
+```
+
+
+```{r}
+playoff_team_lm2 <- lm(win_pct ~ total_pm, data=team_playoff_clutch)
+```
+
+
+```{r}
+summary(playoff_team_lm2)
 ```
 
 
@@ -270,9 +380,6 @@ regular_season_player_dataset <- new_player_csv %>%
 ```
 
 
-```{r}
-regular_season_player_dataset
-```
 
 
 
@@ -281,29 +388,37 @@ regular_season_player_dataset
 
 ```{r}
 rs_clutch_player <- regular_season_player_dataset %>%
-  select(PLAYER_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS, REB) %>%
+  select(PLAYER_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS, REB, TOV) %>%
   group_by(PLAYER_NAME) %>%
   summarise(total_pm = sum(PLUS_MINUS),
   points_per_game = sum(PTS)/sum(GP),
   total_games = sum(GP),
   total_wins = sum(W),
+  win_pct = sum(W)/sum(GP),
   total_points = sum(PTS),
   total_rebounds = sum(REB),
   total_fgm = sum(FGM),
   total_fga = sum(FGA),
   total_fgpct = sum(FGM)/sum(FGA),
   total_fg3pct = sum(`FG3M`)/sum(`FG3A`),
-  win_pct = sum(W)/sum(GP),
-  ft_pct = sum(FTM)/sum(FTA)
+  total_ftm = sum(FTM),
+  total_fta = sum(FTA),
+  total_tov = sum(TOV),
+  ft_pct = sum(FTM)/sum(FTA),
+  #True shooting percentage: PT/(2*(FGA+0.44*FTA))
+  true_shoot_pct = total_points/(2*(total_fga+0.44*total_fta)),
+  # Turnover Rate = 100*TO/(FGA+0.44*FTA+TO)
+  tov_rate = 100*total_tov /(total_fga+0.44*total_fta+total_tov)
   ) %>%
   arrange(desc(total_pm), win_pct)
 DT::datatable(rs_clutch_player)
 ```
 
 
-```{r}
-summary(rs_clutch_player)
-```
+
+
+
+
 
 
 
@@ -312,7 +427,7 @@ summary(rs_clutch_player)
 ggplot(data=rs_clutch_player[1:20, ], aes(x=reorder(PLAYER_NAME, -total_pm), y=total_pm)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Regular Season Player Clutch Plus/Minus",
+  labs(title="NBA Regular Season Top 20 Player Clutch Plus/Minus",
        y="Total Plus/Minus",
        x="Player") +
   coord_flip()
@@ -323,7 +438,7 @@ ggplot(data=rs_clutch_player[1:20, ], aes(x=reorder(PLAYER_NAME, -total_pm), y=t
 ggplot(data=rs_clutch_player[1:20, ], aes(x=reorder(PLAYER_NAME, -win_pct), y=win_pct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Regular Season Player Clutch Win Percentage",
+  labs(title="NBA Top 20 Regular Season Player Clutch Win %",
        y="Win Percentage",
        x="Player") +
   coord_flip()
@@ -331,43 +446,83 @@ ggplot(data=rs_clutch_player[1:20, ], aes(x=reorder(PLAYER_NAME, -win_pct), y=wi
 
 
 
+```{r}
+ggplot(data=rs_clutch_player[1:20, ], aes(x=reorder(PLAYER_NAME, -total_points), y=total_points)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Regular Season Top 20 Player Clutch Points Per Game",
+       y="Total Points",
+       x="Player") +
+  coord_flip()
+```
 
 
 
 
 
 ```{r}
-ggplot(data=rs_clutch_player[1:20, ], aes(x=reorder(PLAYER_NAME, -total_wins), y=total_wins)) +
+ggplot(data=rs_clutch_player[1:20, ], aes(x=reorder(PLAYER_NAME, -points_per_game), y=points_per_game)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Regular Season Player Clutch Total Wins",
-       y="Total Wins",
+  labs(title="NBA Regular Season Top 20 Player Clutch Points Per Game",
+       y="Points Per Game",
        x="Player") +
   coord_flip()
 ```
+
+
+
+
 
 
 ```{r}
 ggplot(data=rs_clutch_player[1:20, ], aes(x=reorder(PLAYER_NAME, -total_fgpct), y=total_fgpct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Regular Season Player Clutch Field Goal Percentage",
-       y="Field Goal Percentage",
+  labs(title="NBA Regular Season Top 20 Player Clutch Field Goal %",
+       y="Field Goal %",
+       x="Player") +
+  coord_flip()
+```
+
+
+```{r}
+ggplot(data=rs_clutch_player[1:20, ], aes(x=reorder(PLAYER_NAME, -ft_pct), y=ft_pct)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Regular Season Top 20 Player Clutch Free Throw %",
+       y="Free Throw %",
+       x="Player") +
+  coord_flip()
+```
+
+
+```{r}
+ggplot(data=rs_clutch_player[1:20, ], aes(x=reorder(PLAYER_NAME, -true_shoot_pct), y=true_shoot_pct)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Regular Season Top 20 Player Clutch True Shooting %",
+       y="True Shooting %",
        x="Player") +
   coord_flip()
 ```
 
 
 
-
-
-
-
+```{r}
+ggplot(data=rs_clutch_player[1:20, ], aes(x=reorder(PLAYER_NAME, -tov_rate), y=tov_rate)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Regular Season Top 20 Players Clutch Turnover Rate",
+       y="Turnover Rate",
+       x="Player") +
+  coord_flip()
+```
 
 
 
 ```{r}
-rs_player_lm <- lm(total_wins ~ total_pm + total_fgm  + total_rebounds + total_points, data=rs_clutch_player)
+rs_player_lm <- lm(win_pct ~ total_pm + total_fgpct + ft_pct + true_shoot_pct + tov_rate + points_per_game, data=rs_clutch_player)
 ```
 
 
@@ -376,7 +531,15 @@ rs_player_lm <- lm(total_wins ~ total_pm + total_fgm  + total_rebounds + total_p
 summary(rs_player_lm)
 ```
 
+```{r}
+rs_player_lm2 <- lm(win_pct ~ total_pm +  true_shoot_pct, data=rs_clutch_player)
+```
 
+
+
+```{r}
+summary(rs_player_lm2)
+```
 
 
 
@@ -397,41 +560,51 @@ playoff_season_player_dataset <- new_player_csv %>%
 
 
 
-
-
-
-
-
 ```{r}
 playoff_performers <- playoff_season_player_dataset %>%
-  select(PLAYER_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS, REB) %>%
+  select(PLAYER_NAME, PLUS_MINUS, FGM, FGA, FG3M, FG3A, FTM, FTA, GP, W, PTS, REB, TOV) %>%
   group_by(PLAYER_NAME) %>%
-  summarise(total_plus_minus = sum(PLUS_MINUS),
-  total_points = sum(PTS),
+  summarise(total_pm = sum(PLUS_MINUS),
   points_per_game = sum(PTS)/sum(GP),
+  total_games = sum(GP),
   total_wins = sum(W),
+  win_pct = sum(W)/sum(GP),
+  total_points = sum(PTS),
   total_rebounds = sum(REB),
   total_fgm = sum(FGM),
   total_fga = sum(FGA),
-  total_fg3m = sum(FG3M),
   total_fgpct = sum(FGM)/sum(FGA),
   total_fg3pct = sum(`FG3M`)/sum(`FG3A`),
-  win_pct = sum(W)/sum(GP),
   total_ftm = sum(FTM),
   total_fta = sum(FTA),
-  ft_pct = sum(FTM)/sum(FTA)
+  total_tov = sum(TOV),
+  ft_pct = sum(FTM)/sum(FTA),
+  #True shooting percentage: PT/(2*(FGA+0.44*FTA))
+  true_shoot_pct = total_points/(2*(total_fga+0.44*total_fta)),
+  # Turnover Rate = 100*TO/(FGA+0.44*FTA+TO)
+  tov_rate = 100*total_tov /(total_fga+0.44*total_fta+total_tov)
   ) %>%
-  arrange(desc(total_plus_minus), win_pct)
+  arrange(desc(total_pm), win_pct)
 DT::datatable(playoff_performers)
 ```
 
 
 
+
+
+
+
+
+
+
+
+
+
 ```{r}
-ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -total_plus_minus), y=total_plus_minus)) +
+ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -total_pm), y=total_pm)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Playoffs Player Clutch Plus/Minus",
+  labs(title="NBA Playoffs Top 20 Players Clutch Plus/Minus",
        y="Plus/Minus",
        x="Player") +
   coord_flip()
@@ -439,10 +612,10 @@ ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -total_plus_m
 
 
 ```{r}
-ggplot(data=playoff_performers[494:514, ], aes(x=reorder(PLAYER_NAME, total_plus_minus), y=total_plus_minus)) +
+ggplot(data=playoff_performers[494:514, ], aes(x=reorder(PLAYER_NAME, total_pm), y=total_pm)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Playoffs Player Clutch Plus/Minus",
+  labs(title="NBA Playoffs Bottom 20 Players Clutch Plus/Minus",
        y="Plus/Minus",
        x="Player") +
   coord_flip()
@@ -461,8 +634,8 @@ ggplot(data=playoff_performers[494:514, ], aes(x=reorder(PLAYER_NAME, total_plus
 ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -win_pct), y=win_pct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Playoffs Player Clutch Win Percentage",
-       y="Win Percentage",
+  labs(title="NBA Playoffs Top 20 Player Clutch Win %",
+       y="Win %",
        x="Player") +
   coord_flip()
 ```
@@ -472,8 +645,8 @@ ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -win_pct), y=
 ggplot(data=playoff_performers[494:514, ], aes(x=reorder(PLAYER_NAME, -win_pct), y=win_pct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Playoffs Player Clutch Win Percentage",
-       y="Win Percentage",
+  labs(title="NBA Playoffs Bottom 20 Player Clutch Win %",
+       y="Win %",
        x="Player") +
   coord_flip()
 ```
@@ -486,8 +659,8 @@ ggplot(data=playoff_performers[494:514, ], aes(x=reorder(PLAYER_NAME, -win_pct),
 ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -total_fgpct), y=total_fgpct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Playoffs Player Clutch Field Goal Percentage",
-       y="Field Goal Percentage",
+  labs(title="NBA Playoffs Player Clutch Field Goal %",
+       y="Field Goal %",
        x="Player") +
   coord_flip()
 ```
@@ -499,8 +672,8 @@ ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -total_fgpct)
 ggplot(data=playoff_performers[494:514, ], aes(x=reorder(PLAYER_NAME, -total_fgpct), y=total_fgpct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Playoffs Player Clutch Field Goal Percentage",
-       y="Field Goal Percentage",
+  labs(title="NBA Playoffs Bottom 20 Player Clutch Field Goal %",
+       y="Field Goal %",
        x="Player") +
   coord_flip()
 ```
@@ -514,8 +687,8 @@ ggplot(data=playoff_performers[494:514, ], aes(x=reorder(PLAYER_NAME, -total_fgp
 ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -ft_pct), y=ft_pct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Playoffs Player Clutch Free Throw Percentage",
-       y="Free Throw Percentage",
+  labs(title="NBA Playoffs Top 20 Players Clutch Free Throw %",
+       y="Free Throw %",
        x="Player") +
   coord_flip()
 ```
@@ -525,17 +698,20 @@ ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -ft_pct), y=f
 ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -total_points), y=total_points)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Playoffs Player Clutch Points",
+  labs(title="NBA Playoffs Top 20 Players Clutch Points",
        y="Points",
        x="Player") +
   coord_flip()
 ```
 
+
+
+
 ```{r}
 ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -points_per_game), y=points_per_game)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Playoffs Player Clutch Points Per Game",
+  labs(title="NBA Playoffs Top 20 Player Clutch Points Per Game",
        y="Points Per Game",
        x="Player") +
   coord_flip()
@@ -546,19 +722,15 @@ ggplot(data=playoff_performers[1:20, ], aes(x=reorder(PLAYER_NAME, -points_per_g
 
 
 
-```{r}
-ggplot(data=playoff_performers[494:514, ], aes(x=reorder(PLAYER_NAME, total_plus_minus), y=total_plus_minus)) +
-  geom_bar(stat="identity", position="dodge") +
-  theme_minimal() +
-  labs(title="NBA Playoffs Player Clutch Plus/Minus",
-       y="Plus/Minus",
-       x="Player") +
-  coord_flip()
-```
 
 
 
 
+
+
+
+
+## Multiple Linear Regression of Playoff Player Clutch Stats
 
 
 
@@ -629,6 +801,14 @@ player_lm <- lm(`win_pct` ~ `total_plus_minus`, data=playoff_performers)
 summary(player_lm)
 ```
 
+
+
+## Takeaways
+
+
+
+
+## Next Steps
 
 
 
