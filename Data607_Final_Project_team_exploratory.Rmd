@@ -48,8 +48,8 @@ team_stat_data_16 <- nba_leaguedashteamstats(season = "2016-17", season_type = "
 team_stat_data_17 <- nba_leaguedashteamstats(season = "2017-18", season_type = "Regular Season")
 team_stat_data_18 <- nba_leaguedashteamstats(season = "2018-19", season_type = "Regular Season")
 team_stat_data_19 <- nba_leaguedashteamstats(season = "2019-20", season_type = "Regular Season")
-team_stat_data_20 <- nba_leaguedashteamstats(season = "2020-21", season_type = "Regular Season")
-team_stat_data_21 <- nba_leaguedashteamstats(season = "2021-22", season_type = "Regular Season")
+team_stat_data_20 <- nba_leaguedashteamstats(season = "2020-21", season_type = "Regular Season", measure_type = "Advanced")
+team_stat_data_21 <- nba_leaguedashteamstats(season = "2021-22", season_type = "Regular Season", measure_type = "Advanced")
 ```
 
 ```{r}
