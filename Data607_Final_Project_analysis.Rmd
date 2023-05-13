@@ -14,10 +14,14 @@ library(shiny)
 
 ```{r}
 # read csv file extracted
-team_clutch_link <- "https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Team_Clutch_Data.csv"
 team_stat_link <- "https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Team_Stat_Regular_Season_Datat.csv"
-nba_teamclutch_dataset <- read_csv(team_clutch_link)
+
+team_clutch_link <- "https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Team_Clutch_Data.csv"
+
 nba_teamstat_dataset <- read_csv(team_stat_link)
+nba_teamclutch_dataset <- read_csv(team_clutch_link)
+
+head(nba_teamstat_dataset)
 ```
 
 ```{r}
@@ -26,32 +30,61 @@ nba_teamstat_summary <- nba_teamstat_dataset %>%
   summarise(total_win = sum(W),
             total_loss = sum(L),
             overall_all_game = sum(GP),
-            total_plus_minus = sum(PLUS_MINUS),
-            total_fgm = sum(FGM),
-            total_fga = sum(FGA),
-            total_fg3m = sum(FG3M),
-            total_fg3a = sum(FG3A),
-            total_ftm = sum(FTM),
-            total_fta = sum(FTA),
-            total_rebound = sum(REB),
-            total_assist = sum(AST),
-            total_block = sum(BLK),
-            total_steal = sum(STL),
-            total_point = sum(PTS),
-            overall_winning_pct = total_win/overall_all_game,
+            avg_pts = mean(PTS),
+            avg_plus_minus = mean(PLUS_MINUS),
+            avg_fgm = mean(FGM),
+            avg_fga = mean(FGA),
+            avg_fg3m = mean(FG3M),
+            avg_fg3a = mean(FG3A),
+            avg_ftm = mean(FTM),
+            avg_fta = mean(FTA),
+            avg_rebound = mean(REB),
+            avg_assist = mean(AST),
+            avg_block = mean(BLK),
+            avg_steal = mean(STL),
+            avg_point = mean(PTS),
+            avg_tov = mean(TOV),
+            turnover_rate = (100 * avg_tov)/(avg_fga + (avg_fta * 0.44) + avg_assist + avg_tov),
+            true_shooting_pct = avg_pts/(2*(avg_fga  + (0.44 * avg_fta))),
             .groups = 'drop')
    
 # scatter plot
-ggplot(nba_teamstat_summary, aes(x = TEAM_NAME, y = overall_winning_pct)) +
+ggplot(nba_teamstat_summary, aes(x = TEAM_NAME, y = total_win)) +
   geom_point(colour = 4) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1, size = 8))
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=0.5, size = 8))
 ```
 
 ```{r}
-head(nba_teamstat_dataset)
+nba_teamclutch_summary <- nba_teamclutch_dataset %>%
+  group_by(TEAM_NAME) %>%
+  summarise(total_win = sum(W),
+            total_loss = sum(L),
+            overall_all_game = sum(GP),
+            avg_plus_minus = mean(PLUS_MINUS),
+            avg_pts = mean(PTS),
+            avg_fgm = mean(FGM),
+            avg_fga = mean(FGA),
+            avg_fg3m = mean(FG3M),
+            avg_fg3a = mean(FG3A),
+            avg_ftm = mean(FTM),
+            avg_fta = mean(FTA),
+            avg_rebound = mean(REB),
+            avg_assist = mean(AST),
+            avg_block = mean(BLK),
+            avg_steal = mean(STL),
+            avg_point = mean(PTS),
+            avg_tov = mean(TOV),
+            turnover_rate = (100 * avg_tov)/(avg_fga + (avg_fta * 0.44) + avg_assist + avg_tov),
+            true_shooting_pct = avg_pts/(2*(avg_fga  + (0.44 * avg_fta))),
+            .groups = 'drop')
+
+head(nba_teamclutch_summary)
 ```
 
+```{r}
+
+```
 
 
 
