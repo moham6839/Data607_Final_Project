@@ -48,8 +48,8 @@ team_stat_data_16 <- nba_leaguedashteamstats(season = "2016-17", season_type = "
 team_stat_data_17 <- nba_leaguedashteamstats(season = "2017-18", season_type = "Regular Season")
 team_stat_data_18 <- nba_leaguedashteamstats(season = "2018-19", season_type = "Regular Season")
 team_stat_data_19 <- nba_leaguedashteamstats(season = "2019-20", season_type = "Regular Season")
-team_stat_data_20 <- nba_leaguedashteamstats(season = "2020-21", season_type = "Regular Season", measure_type = "Advanced")
-team_stat_data_21 <- nba_leaguedashteamstats(season = "2021-22", season_type = "Regular Season", measure_type = "Advanced")
+team_stat_data_20 <- nba_leaguedashteamstats(season = "2020-21", season_type = "Regular Season")
+team_stat_data_21 <- nba_leaguedashteamstats(season = "2021-22", season_type = "Regular Season")
 ```
 
 ```{r}
@@ -650,7 +650,7 @@ DT::datatable(player_new_df_list)
 nba_all_teamclutch_data <- rbind(team_new_df_list, nba_historical_clutch_data)
 nba_all_playerclutch_data <- rbind(player_new_df_list, nba_historical_player_clutch_data)
 
-
+# save the result data into csv files
 path_csv <- getwd()
 path_csv2 <- getwd()
 path_csv3 <- getwd()
