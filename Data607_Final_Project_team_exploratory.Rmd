@@ -13,7 +13,6 @@ knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ```{r}
 library(tidyverse)
 library(magrittr)
-
 library(hoopR)
 
 # You can install using the pacman package using the following code:
@@ -644,7 +643,157 @@ player_new_df_list$Season_Type <- "Playoffs"
 DT::datatable(player_new_df_list)
 ```
 
-### Write CSV Files
+## Advanced Stats for NBA Team Playoff
+```{r}
+advanced_team_clutch_playoffs02 <- nba_leaguedashteamclutch(season = "2001-02", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs02 <- advanced_team_clutch_playoffs02 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2001-02", season_year = "2002")
+
+advanced_team_clutch_playoffs03 <- nba_leaguedashteamclutch(season = "2002-03", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs03 <- advanced_team_clutch_playoffs03 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2002-03", season_year = "2003")
+
+advanced_team_clutch_playoffs04 <- nba_leaguedashteamclutch(season = "2003-04", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs04 <- advanced_team_clutch_playoffs04 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2003-04", season_year = "2004")
+
+advanced_team_clutch_playoffs05 <- nba_leaguedashteamclutch(season = "2004-05", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs05 <- advanced_team_clutch_playoffs05 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2004-05", season_year = "2005")
+
+advanced_team_clutch_playoffs06 <- nba_leaguedashteamclutch(season = "2005-06", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs06 <- advanced_team_clutch_playoffs06 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2005-06", season_year = "2006")
+
+advanced_team_clutch_playoffs07 <- nba_leaguedashteamclutch(season = "2006-07", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs07 <- advanced_team_clutch_playoffs07 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2006-07", season_year = "2007")
+
+advanced_team_clutch_playoffs08 <- nba_leaguedashteamclutch(season = "2007-08", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs08 <- advanced_team_clutch_playoffs08 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2007-08", season_year = "2008")
+
+advanced_team_clutch_playoffs09 <- nba_leaguedashteamclutch(season = "2008-09", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs09 <- advanced_team_clutch_playoffs09 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2008-09", season_year = "2009")
+
+advanced_team_clutch_playoffs10 <- nba_leaguedashteamclutch(season = "2009-10", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs10 <- advanced_team_clutch_playoffs10 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2009-10", season_year = "2010")
+
+advanced_team_clutch_playoffs11 <- nba_leaguedashteamclutch(season = "2010-11", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs11 <- advanced_team_clutch_playoffs11 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2010-11", season_year = "2011")
+
+advanced_team_clutch_playoffs12 <- nba_leaguedashteamclutch(season = "2011-12", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs12 <- advanced_team_clutch_playoffs12 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2011-12", season_year = "2012")
+
+advanced_team_clutch_playoffs13 <- nba_leaguedashteamclutch(season = "2012-13", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs13 <- advanced_team_clutch_playoffs13 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2012-13", season_year = "2013")
+
+advanced_team_clutch_playoffs14 <- nba_leaguedashteamclutch(season = "2013-14", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs14 <- advanced_team_clutch_playoffs14 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2013-14", season_year = "2014")
+
+advanced_team_clutch_playoffs15 <- nba_leaguedashteamclutch(season = "2014-15", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs15 <- advanced_team_clutch_playoffs15 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2014-15", season_year = "2015")
+
+advanced_team_clutch_playoffs16 <- nba_leaguedashteamclutch(season = "2015-16", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs16 <- advanced_team_clutch_playoffs16 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2015-16", season_year = "2016")
+
+advanced_team_clutch_playoffs17 <- nba_leaguedashteamclutch(season = "2016-17", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs17 <- advanced_team_clutch_playoffs17 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2016-17", season_year = "2017")
+
+advanced_team_clutch_playoffs18 <- nba_leaguedashteamclutch(season = "2017-18", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs18 <- advanced_team_clutch_playoffs18 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2017-18", season_year = "2018")
+
+advanced_team_clutch_playoffs19 <- nba_leaguedashteamclutch(season = "2018-19", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs19 <- advanced_team_clutch_playoffs19 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2018-19", season_year = "2019")
+
+advanced_team_clutch_playoffs20 <- nba_leaguedashteamclutch(season = "2019-20", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs20 <- advanced_team_clutch_playoffs20 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2019-20", season_year = "2020")
+
+advanced_team_clutch_playoffs21 <- nba_leaguedashteamclutch(season = "2020-21", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs21 <- advanced_team_clutch_playoffs21 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2020-21", season_year = "2021")
+
+advanced_team_clutch_playoffs22 <- nba_leaguedashteamclutch(season = "2021-22", season_type = "Playoffs", measure_type = "Advanced")
+advanced_team_clutch_playoffs22 <- advanced_team_clutch_playoffs22 %>%
+  data.frame(check.names = FALSE) %>%
+  rename_with(~ gsub("LeagueDashTeamClutch.", "",.x, fixed=TRUE)) %>%
+  add_column(team_season = "2021-22", season_year = "2022")
+```
+
+```{r}
+# merge all data frames into one
+advanced_team_clutch_playoff_list <- list(advanced_team_clutch_playoffs02, advanced_team_clutch_playoffs03,
+                                         advanced_team_clutch_playoffs03, advanced_team_clutch_playoffs04,
+                                         advanced_team_clutch_playoffs04, advanced_team_clutch_playoffs05,
+                                         advanced_team_clutch_playoffs06, advanced_team_clutch_playoffs07,
+                                         advanced_team_clutch_playoffs08, advanced_team_clutch_playoffs09,
+                                         advanced_team_clutch_playoffs10, advanced_team_clutch_playoffs11,
+                                         advanced_team_clutch_playoffs12, advanced_team_clutch_playoffs13,
+                                         advanced_team_clutch_playoffs14, advanced_team_clutch_playoffs15,
+                                         advanced_team_clutch_playoffs16, advanced_team_clutch_playoffs17,
+                                         advanced_team_clutch_playoffs18, advanced_team_clutch_playoffs19,
+                                         advanced_team_clutch_playoffs20, advanced_team_clutch_playoffs21,
+                                         advanced_team_clutch_playoffs22)
+
+advanced_team_clutch_playoff_list <- Reduce(
+  function(x,y, ...) merge(x,y, all=TRUE, ...), advanced_team_clutch_playoff_list)
+
+DT::datatable(advanced_team_clutch_playoff_list)
+```
+
+## Write CSV Files
 ```{r}
 # merge all regular season and playoffs clutch data
 nba_all_teamclutch_data <- rbind(team_new_df_list, nba_historical_clutch_data)
@@ -652,11 +801,10 @@ nba_all_playerclutch_data <- rbind(player_new_df_list, nba_historical_player_clu
 
 # save the result data into csv files
 path_csv <- getwd()
-path_csv2 <- getwd()
-path_csv3 <- getwd()
 write.csv(nba_all_teamclutch_data, file.path(path_csv, "Team_Clutch_Data.csv"))
-write.csv(nba_all_playerclutch_data, file.path(path_csv2, "Player_Clutch_Data.csv"))
-write.csv(nba_historical_team_data, file.path(path_csv3, "Team_Stat_Regular_Season_Datat.csv"))
+write.csv(nba_all_playerclutch_data, file.path(path_csv, "Player_Clutch_Data.csv"))
+write.csv(nba_historical_team_data, file.path(path_csv, "Team_Stat_Regular_Season_Datat.csv"))
+write.csv(advanced_team_clutch_playoff_list, file.path(path_csv, "Advanced_Stat_playoff.csv"))
 ```
 
 
