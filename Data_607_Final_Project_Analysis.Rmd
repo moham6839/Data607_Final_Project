@@ -18,7 +18,6 @@ The term "clutch" is defined as a situation when a game is within 5 points in th
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-library(nbastatR)
 library(hoopR)
 library(DT)
 library(plotly)
@@ -102,11 +101,11 @@ DT::datatable(team_rs_win_pct)
 
 
 ```{r}
-ggplot(data=team_rs_win_pct, aes(x=reorder(TEAM_NAME, -win_pct), y=win_pct)) +
+ggplot(data=team_rs_win_pct, aes(x=reorder(TEAM_NAME, win_pct), y=win_pct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Regular Season Team Clutch Win Percentage",
-       y="Win Percentage",
+  labs(title="NBA Regular Season Team Clutch Win %",
+       y="Win %",
        x="Team") +
   coord_flip()
 ```
@@ -487,17 +486,28 @@ ggplot(data=team_playoff_tov, aes(x=reorder(TEAM_NAME, -tov_rate), y=tov_rate)) 
 
 
 
-## Combining Team Regular Season and Playoff Clutch Stats (Minimum 10 Games)
+## Combining Team Regular Season and Playoff Clutch Stats 
 
 
-### Winning Percentage
+### Winning Percentage (Minimum 10 Games)
 
 
 ```{r}
 combined_team_winpct <- inner_join(team_rs_win_pct, team_playoff_win_pct, by="TEAM_NAME") %>%
-  mutate(diff = win_pct.x - win_pct.y) %>%
+  mutate(diff = win_pct.y - win_pct.x) %>%
   arrange(desc(diff))
 DT::datatable(combined_team_winpct)
+```
+
+
+```{r}
+ggplot(data=combined_team_winpct, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Team Differential in Win %",
+       y="Win %",
+       x="Team") +
+  coord_flip()
 ```
 
 
@@ -517,15 +527,43 @@ DT::datatable(combined_team_pm)
 
 
 
+```{r}
+ggplot(data=combined_team_pm, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Team Differential in Plus/Minus",
+       y="Plus/Minus",
+       x="Team") +
+  coord_flip()
+```
+
+
+
+
+
+
+
 ### Field Goal %
 
 
 ```{r}
 combined_team_fgpct <- inner_join(team_rs_fgpct, team_playoff_fg_pct, by="TEAM_NAME") %>%
-  mutate(diff = total_fgpct.x - total_fgpct.y) %>%
+  mutate(diff = round((total_fgpct.y - total_fgpct.x), digits=3)) %>%
   arrange(desc(diff))
 DT::datatable(combined_team_fgpct)
 ```
+
+
+```{r}
+ggplot(data=combined_team_fgpct, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Team Differential in Field Goal %",
+       y="Win %",
+       x="Team") +
+  coord_flip()
+```
+
 
 
 
@@ -533,10 +571,25 @@ DT::datatable(combined_team_fgpct)
 
 ```{r}
 combined_team_ppg <- inner_join(team_rs_ppg, team_playoff_ppg, by="TEAM_NAME") %>%
-  mutate(diff = points_per_game.x - points_per_game.y) %>%
+  mutate(diff = round((points_per_game.y - points_per_game.x), digits=3))%>%
   arrange(desc(diff))
 DT::datatable(combined_team_ppg)
 ```
+
+
+```{r}
+ggplot(data=combined_team_ppg, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Team Differential in Points Per Game",
+       y="PPG",
+       x="Team") +
+  coord_flip()
+```
+
+
+
+
 
 ### Free Throw Percentage
 
@@ -544,36 +597,74 @@ DT::datatable(combined_team_ppg)
 
 ```{r}
 combined_team_ftpct <- inner_join(team_rs_ftpct, team_playoff_ft_pct, by="TEAM_NAME") %>%
-  mutate(diff = ft_pct.x - ft_pct.y) %>%
+  mutate(diff = ft_pct.y - ft_pct.x) %>%
   arrange(desc(diff))
 DT::datatable(combined_team_ftpct)
 ```
 
 
 
+```{r}
+ggplot(data=combined_team_ftpct, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Team Differential in Free Throw %",
+       y="FT %",
+       x="Team") +
+  coord_flip()
+```
+
+
 ### True Shooting %
 
 ```{r}
 combined_team_tspct <- inner_join(team_rs_ts, team_playoff_ts, by="TEAM_NAME") %>%
-  mutate(diff = true_shoot_pct.x - true_shoot_pct.y) %>%
+  mutate(diff = true_shoot_pct.y - true_shoot_pct.x) %>%
   arrange(desc(diff))
 DT::datatable(combined_team_tspct)
 ```
+
+
+
+```{r}
+ggplot(data=combined_team_tspct, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Team Differential in True Shooting %",
+       y="TS %",
+       x="Team") +
+  coord_flip()
+```
+
+
+
+
+
 
 ### Turnover Rate
 
 ```{r}
 combined_team_tov <- inner_join(team_rs_tov, team_playoff_tov, by="TEAM_NAME") %>%
-  mutate(diff = tov_rate.x - tov_rate.y) %>%
+  mutate(diff = tov_rate.y - tov_rate.x) %>%
   arrange(desc(diff))
 DT::datatable(combined_team_tov)
 ```
 
 
+```{r}
+ggplot(data=combined_team_tov, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Team Differential in Turnover Rate",
+       y="Turnover Rate",
+       x="Team") +
+  coord_flip()
+```
 
 
 
 
+## Team Takeaways
 
 
 
@@ -704,31 +795,6 @@ ggplot(data=rs_clutch_player[1:25, ], aes(x=reorder(PLAYER_NAME, -win_pct), y=wi
 ```
 
 
-
-## Regular Season Top 25 Players Clutch Total Points
-
-
-```{r}
-player_rs_total_pts <- rs_clutch_player %>%
-  select(PLAYER_NAME, total_points) %>%
-  #filter(total_games >= 100) %>%
-  arrange(desc(total_points))
-DT::datatable(player_rs_total_pts)
-```
-
-
-
-
-
-```{r}
-ggplot(data=player_rs_total_pts[1:25, ], aes(x=reorder(PLAYER_NAME, -total_points), y=total_points)) +
-  geom_bar(stat="identity", position="dodge") +
-  theme_minimal() +
-  labs(title="NBA Regular Season Top 25 Players Clutch Points Per Game",
-       y="Total Points",
-       x="Player") +
-  coord_flip()
-```
 
 
 ## Regular Season Top 25 Players Clutch Total Points Per Game (Minimum 50 games)
@@ -1149,6 +1215,10 @@ ggplot(data=player_playoff_ts_pct[1:20, ], aes(x=reorder(PLAYER_NAME, -true_shoo
 ## Combining Player Regular Season and Playoff Clutch Stats
 
 
+
+
+
+
 ### Field Goal %
 
 
@@ -1170,10 +1240,6 @@ ggplot(data=combined_fgpct_df, aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
        x="Player") +
   coord_flip()
 ```
-
-
-
-
 
 
 
@@ -1211,7 +1277,7 @@ ggplot(data=combined_ppg_df[45:65, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
   labs(title="Player Difference Points Per Game (Minimum 25 Games)",
-       y="Plus/Minus",
+       y="Points Per Game",
        x="Player") +
   coord_flip()
 ```
@@ -1238,7 +1304,7 @@ DT::datatable(combined_ftpct_df)
 ggplot(data=combined_ftpct_df, aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="Player Free Throw Percentage Difference (Minimum 25 Free Throw Attempts)",
+  labs(title="Player Free Throw Percentage Difference (Minimum 25 FTA)",
        y="Plus/Minus",
        x="Player") +
   coord_flip()
@@ -1312,24 +1378,12 @@ ggplot(data=combined_tspct_df[1:19, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff
 
 
 
-```{r}
-library(caret)
 
-```
+## Player Takeaways
 
+- Kyrie Irving has the biggest decline in Points Per Game in clutch situations from the regular season to playoffs, followed by Russell Westbrook. Other notable names in the top 10 in decline were Kevin Durant and James Harden. 
 
-
-
-
-
-
-## Takeaways
-
-When analyzing the team plus/minus totals from the regular season to the playoffs, there is a noticeable decrease in the number of teams with a positive plus/minus, from 
-
-
-
-
+- While Chris Paul had the highest positive Plus/Minus number among all players in the regular season, he had one of the highest negative Plus/Minus in the playoffs. 
 
 
 
@@ -1339,7 +1393,7 @@ When analyzing the team plus/minus totals from the regular season to the playoff
 ## Next Steps
 
 
-W
+Possible next steps that can be explored include using more advanced stats such as rebounding rate, effective field goal and assist percentages. Additionally, with the exception of Plus/Minus, this analysis does not measure the impact of defense in clutch situations. Further 
 
 
 
