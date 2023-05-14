@@ -1075,6 +1075,12 @@ summary(player_lm)
 
 ## Takeaways
 
+When analyzing the team plus/minus totals from the regular season to the playoffs, there is a noticeable decrease in the number of teams with a positive plus/minus, from 
+
+
+
+
+
 
 
 
