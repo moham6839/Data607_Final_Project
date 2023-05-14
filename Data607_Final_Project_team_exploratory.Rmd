@@ -799,6 +799,10 @@ DT::datatable(advanced_team_clutch_playoff_list)
 nba_all_teamclutch_data <- rbind(team_new_df_list, nba_historical_clutch_data)
 nba_all_playerclutch_data <- rbind(player_new_df_list, nba_historical_player_clutch_data)
 
+# adjust the team name to match up properly
+nba_all_teamclutch_data <- nba_all_teamclutch_data %>%
+  mutate(TEAM_NAME = recode(TEAM_NAME, "Los Angeles Clippers" = "LA Clippers", "Charlotte Bobcats" = "Charlotte Hornets"))
+
 # save the result data into csv files
 path_csv <- getwd()
 write.csv(nba_all_teamclutch_data, file.path(path_csv, "Team_Clutch_Data.csv"))
