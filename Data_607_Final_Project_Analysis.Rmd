@@ -848,30 +848,6 @@ ggplot(data=rs_clutch_player[1:25, ], aes(x=reorder(PLAYER_NAME, -tov_rate), y=t
 
 
 
-## Multiple Linear Regression Model - Regular Season Player Clutch Stats
-
-
-```{r}
-rs_player_lm <- lm(win_pct ~ total_pm + total_fgpct + ft_pct + true_shoot_pct + tov_rate + points_per_game, data=rs_clutch_player)
-```
-
-
-
-```{r}
-summary(rs_player_lm)
-```
-
-```{r}
-rs_player_lm2 <- lm(win_pct ~ total_pm +  true_shoot_pct, data=rs_clutch_player)
-```
-
-
-
-```{r}
-summary(rs_player_lm2)
-```
-
-
 
 
 
@@ -1087,28 +1063,6 @@ ggplot(data=player_ft_pct[1:32, ], aes(x=reorder(PLAYER_NAME, -ft_pct), y=ft_pct
 
 
 
-## Playoffs Top 25 Players Clutch Total Points (Minimum 20 games)
-
-```{r}
-player_playoff_total_pts <- playoff_performers %>%
-  select(PLAYER_NAME, total_points, total_games) %>%
-  filter(total_games >= 20) %>%
-  arrange(desc(total_points))
-DT::datatable(player_playoff_total_pts)
-```
-
-
-
-
-```{r}
-ggplot(data=player_playoff_total_pts[1:20, ], aes(x=reorder(PLAYER_NAME, -total_points), y=total_points)) +
-  geom_bar(stat="identity", position="dodge") +
-  theme_minimal() +
-  labs(title="NBA Playoffs Top 20 Players Clutch Points",
-       y="Points",
-       x="Player") +
-  coord_flip()
-```
 
 
 
@@ -1118,7 +1072,7 @@ ggplot(data=player_playoff_total_pts[1:20, ], aes(x=reorder(PLAYER_NAME, -total_
 ```{r}
 player_playoff_ppg <- playoff_performers %>%
   select(PLAYER_NAME, points_per_game, total_games) %>%
-  filter(total_games >= 20) %>%
+  filter(total_games >= 25) %>%
   arrange(desc(points_per_game))
 DT::datatable(player_playoff_ppg)
 ```
@@ -1140,7 +1094,7 @@ ggplot(data=player_playoff_ppg[1:20, ], aes(x=reorder(PLAYER_NAME, -points_per_g
 ## Playoffs Bottom 20 Players Clutch Points Per Game
 
 ```{r}
-ggplot(data=player_playoff_ppg[71:91, ], aes(x=reorder(PLAYER_NAME, points_per_game), y=points_per_game)) +
+ggplot(data=player_playoff_ppg[45:65, ], aes(x=reorder(PLAYER_NAME, -points_per_game), y=points_per_game)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
   labs(title="NBA Playoffs Bottom 20 Players Clutch Points Per Game",
@@ -1181,36 +1135,13 @@ ggplot(data=player_playoff_ts_pct[1:20, ], aes(x=reorder(PLAYER_NAME, -true_shoo
 
 
 
-## Multiple Linear Regression of Playoff Player Clutch Stats
 
 
 
-```{r}
-( lr.out <- glm(`win_pct` ~ total_plus_minus, data = playoff_performers, family = binomial(link = 'logit')) )
-```
+## Combining Player Regular Season and Playoff Clutch Stats
 
 
-
-
-```{r}
-playoff_player_lm <- lm(win_pct ~ total_pm + total_fgm  + total_ftm + total_rebounds + total_points, data=playoff_performers)
-```
-
-
-
-
-
-
-
-
-
-```{r}
-summary(playoff_player_lm)
-```
-
-
-
-
+### Field Goal %
 
 
 
@@ -1222,60 +1153,176 @@ DT::datatable(combined_fgpct_df)
 ```
 
 
+```{r}
+ggplot(data=combined_fgpct_df, aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Playoffs Top Players True Shooting %",
+       y="True Shooting %",
+       x="Player") +
+  coord_flip()
+```
+
+
+
+
+
+Plus/Minus
 
 
 ```{r}
 combined_pm_df <- inner_join(player_rs_pm, player_playoff_pm, by="PLAYER_NAME") %>%
   mutate(diff = total_pm.y - total_pm.x) %>%
-  arrange(diff)
+  arrange(desc(total_pm.y))
 DT::datatable(combined_pm_df)
 ```
 
 
 
 
+```{r}
+ggplot(data=combined_pm_df[1:25, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="NBA Playoffs Player Plus/Minus Diff",
+       y="Plus/Minus",
+       x="Player") +
+  coord_flip()
+```
+
+
+
+
+### Points Per Game
+
+
 
 ```{r}
 combined_ppg_df <- inner_join(player_rs_ppg, player_playoff_ppg, by="PLAYER_NAME") %>%
-  mutate(diff = points_per_game.x - points_per_game.y) %>%
-  arrange(desc(diff))
+  mutate(diff = round((points_per_game.y - points_per_game.x), digits=3)) %>%
+  arrange(diff)
 DT::datatable(combined_ppg_df)
 ```
 
 
+
+```{r}
+ggplot(data=combined_ppg_df[1:20, ], aes(x=reorder(PLAYER_NAME, diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Player Points Per Game (Minimum 25 Games)",
+       y="Plus/Minus",
+       x="Player") +
+  coord_flip()
+```
+
+
+
+```{r}
+ggplot(data=combined_ppg_df[45:65, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Player Difference Points Per Game (Minimum 25 Games)",
+       y="Plus/Minus",
+       x="Player") +
+  coord_flip()
+```
+
+
+
+
+
+
+
+### Free Throw Percentage
+
+
 ```{r}
 combined_ftpct_df <- inner_join(player_rs_ftpct, player_playoff_ft_pct, by="PLAYER_NAME") %>%
-  mutate(diff = ft_pct.x - ft_pct.y) %>%
+  mutate(diff = round((ft_pct.y - ft_pct.x), digits=3)) %>%
   arrange(diff)
 DT::datatable(combined_ftpct_df)
 ```
 
 
+
+```{r}
+ggplot(data=combined_ftpct_df, aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Player Free Throw Percentage Difference (Minimum 25 Free Throw Attempts)",
+       y="Plus/Minus",
+       x="Player") +
+  coord_flip()
+```
+
+
+
+
+
+### Winning Percentage
+
+
+
 ```{r}
 combined_win_pct_df <- inner_join(player_rs_win_pct, player_playoff_win_pct, by="PLAYER_NAME") %>%
-  mutate(diff = win_pct.y - win_pct.x) %>%
+  mutate(diff = round((win_pct.y - win_pct.x), digits=3)) %>%
   arrange(desc(diff))
 DT::datatable(combined_win_pct_df)
 ```
 
 
+
+```{r}
+ggplot(data=combined_win_pct_df[1:20, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Player Winning % Difference (Minimum 150 Reg. Season and 20 Playoff Games)",
+       y="Win %",
+       x="Player") +
+  coord_flip()
+```
+
+
+```{r}
+ggplot(data=combined_win_pct_df[62:82, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Player Win % Difference (Minimum 150 Reg. Season and 20 PO Games)",
+       y="Win %",
+       x="Player") +
+  coord_flip()
+```
+
+
+
+
+
+
+
+
+
+### True Shooting Percentage
+
 ```{r}
 combined_tspct_df <- inner_join(player_rs_tspct, player_playoff_ts_pct, by="PLAYER_NAME") %>%
-  mutate(diff = true_shoot_pct.x - true_shoot_pct.y) %>%
+  mutate(diff = round((true_shoot_pct.y - true_shoot_pct.x), digits=3)) %>%
   arrange(desc(diff))
 DT::datatable(combined_tspct_df)
 ```
 
 
-
-
 ```{r}
-combined_team_pm <- inner_join(team_rs_clutch, team_playoff_clutch, by="TEAM_NAME") %>%
-  mutate(diff = total_pm.x - total_pm.y) %>%
-  arrange(desc(diff))
-#T::datatable(combined_team_pm)
-combined_team_pm
+ggplot(data=combined_tspct_df[1:19, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
+  geom_bar(stat="identity", position="dodge") +
+  theme_minimal() +
+  labs(title="Player TS % Difference",
+       y="TS %",
+       x="Player") +
+  coord_flip()
 ```
+
+
 
 
 
