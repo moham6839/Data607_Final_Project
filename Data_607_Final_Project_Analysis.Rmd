@@ -83,6 +83,8 @@ DT::datatable(team_rs_clutch)
 
 
 
+
+
 ## Team Regular Season Clutch Winning Percentage
 
 
@@ -467,7 +469,7 @@ DT::datatable(team_playoff_tov)
 
 
 ```{r}
-ggplot(data=team_playoff_tov, aes(x=reorder(TEAM_NAME, -tov_rate), y=tov_rate)) +
+ggplot(data=team_playoff_tov[1:33, ], aes(x=reorder(TEAM_NAME, -tov_rate), y=tov_rate)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
   labs(title="NBA Playoffs Team Clutch Turnover Rate",
@@ -904,21 +906,6 @@ ggplot(data=player_rs_tspct[1:25, ], aes(x=reorder(PLAYER_NAME, -true_shoot_pct)
   coord_flip()
 ```
 
-
-
-## Regular Season Top 25 Players Clutch Turnover Rate
-
-
-
-```{r}
-ggplot(data=rs_clutch_player[1:25, ], aes(x=reorder(PLAYER_NAME, -tov_rate), y=tov_rate)) +
-  geom_bar(stat="identity", position="dodge") +
-  theme_minimal() +
-  labs(title="NBA Regular Season Top 25 Players Clutch Turnover Rate",
-       y="Turnover Rate",
-       x="Player") +
-  coord_flip()
-```
 
 
 
