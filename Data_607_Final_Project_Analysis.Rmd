@@ -20,9 +20,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(nbastatR)
 library(hoopR)
-library(ggfortify)
 library(DT)
-library(caret)
+library(plotly)
 ```
 
 
@@ -95,6 +94,7 @@ team_rs_win_pct <- team_rs_clutch %>%
   arrange(desc(win_pct))
 DT::datatable(team_rs_win_pct)
 ```
+
 
 
 
@@ -476,6 +476,14 @@ ggplot(data=team_playoff_tov, aes(x=reorder(TEAM_NAME, -tov_rate), y=tov_rate)) 
        x="Team") +
   coord_flip()
 ```
+
+
+
+
+
+
+
+
 
 
 
@@ -1157,8 +1165,8 @@ DT::datatable(combined_fgpct_df)
 ggplot(data=combined_fgpct_df, aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="NBA Playoffs Top Players True Shooting %",
-       y="True Shooting %",
+  labs(title="NBA Playoffs Player Field Goal %",
+       y="Field Goal %",
        x="Player") +
   coord_flip()
 ```
@@ -1167,28 +1175,8 @@ ggplot(data=combined_fgpct_df, aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
 
 
 
-Plus/Minus
 
 
-```{r}
-combined_pm_df <- inner_join(player_rs_pm, player_playoff_pm, by="PLAYER_NAME") %>%
-  mutate(diff = total_pm.y - total_pm.x) %>%
-  arrange(desc(total_pm.y))
-DT::datatable(combined_pm_df)
-```
-
-
-
-
-```{r}
-ggplot(data=combined_pm_df[1:25, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
-  geom_bar(stat="identity", position="dodge") +
-  theme_minimal() +
-  labs(title="NBA Playoffs Player Plus/Minus Diff",
-       y="Plus/Minus",
-       x="Player") +
-  coord_flip()
-```
 
 
 
@@ -1323,6 +1311,11 @@ ggplot(data=combined_tspct_df[1:19, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff
 ```
 
 
+
+```{r}
+library(caret)
+
+```
 
 
 
