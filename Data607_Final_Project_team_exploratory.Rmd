@@ -801,7 +801,7 @@ nba_all_playerclutch_data <- rbind(player_new_df_list, nba_historical_player_clu
 
 # adjust the team name to match up properly
 nba_all_teamclutch_data <- nba_all_teamclutch_data %>%
-  mutate(TEAM_NAME = recode(TEAM_NAME, "Los Angeles Clippers" = "LA Clippers", "Charlotte Bobcats" = "Charlotte Hornets"))
+  mutate(TEAM_NAME = recode(TEAM_NAME, "Los Angeles Clippers" = "LA Clippers", "Charlotte Bobcats" = "Charlotte Hornets", "New Orleans Hornets" = "New Orleans Pelicans", "Seattle SuperSonics" = "Oklahoma City Thunder", "New Orleans/Oklahoma City Hornets" = "New Orleans Pelicans"))
 
 # save the result data into csv files
 path_csv <- getwd()
