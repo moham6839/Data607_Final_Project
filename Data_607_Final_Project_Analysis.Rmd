@@ -659,7 +659,7 @@ ggplot(data=combined_team_tov, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
 
 ```{r}
 new_player_csv <- read.csv("https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Player_Clutch_Data.csv")
-head(new_player_csv)
+DT::datatable(new_player_csv)
 ```
 
 
