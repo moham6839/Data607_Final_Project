@@ -1,5 +1,15 @@
-## My observation
+Team observation
 
-After our finding, we see that in term of clutch performances, San Antonio Spurs have the highest winning percentage during the regular season. However, it does not paint a good picture that Spurs is the better team. We decided to use the plus/minus to see the net change when a given player is either on or off the court for each team.
+## Regular Season
 
-Based on that, we can see Dallas Maverick have higher PLUS/MINUS than San Antonio Spurs. It could mean that Maverick have better players than other teams overall. That mean their players can score better during clutch moments. So we decided to review the average points per game in that sense.
+After our extraction and clean up, we see that in term of clutch performances during regular season, San Antonio Spurs have the highest winning percentage during the regular season. However, it does not paint a good picture that Spurs is the better team. We decided to use the plus/minus to see the net change when a given player is either on or off the court for each team.
+Based on that, we can see Dallas Maverick have higher PLUS/MINUS than San Antonio Spurs. It could mean that Maverick have better players than other teams overall. That mean their players can score higher during clutch moments. So we decided to review the average points per game in that sense. It appears that it is not the case. In term of points per game, Oklahoma City Thunder have the higest average points per game, higher than other teams mentioned. Because of that, we checked the field goal percentage to see if Thunder have the highest percentage as well. That spot goes to the Seattle SuperSonics. But Thunder do have the highest free throw percentage.
+Given that shooting is one of the biggest factor of winning games in NBA, we decided to use True Shooting % to see which team have the best shooting percentage. From there, we see that LA Clippers have the highest shooting percentage, followed by Maverick.
+Another factor to consider is turnover. We use the turnover rate to peform our analysis. We can see that Maverick have the lowest rate.
+So in the regular season overall, it shows that LA Clippers have the strong clutch performance in terms of offense. Does it hold true during the playoff?
+
+## Playoffs Season
+
+After reviewing the regular season data, we turned to the playoff season data. From there, the Cleveland Cavaliers took the lead with the highest percentage. We then looked itno the PLUS/MINUS as well and see that Miami Heat have the highest point, followed by Lakers and Cavaliers (Lebrons played for all of them). 
+
+Looking at the field goals %, Pelicans score highest in that aspect. 
