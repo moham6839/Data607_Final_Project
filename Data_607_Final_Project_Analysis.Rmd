@@ -1073,14 +1073,14 @@ player_playoff_ft_pct <- playoff_performers %>%
   select(PLAYER_NAME, ft_pct, total_fta) %>%
   filter(total_fta >= 25) %>%
   arrange(desc(ft_pct))
-DT::datatable(player_ft_pct)
+DT::datatable(player_playoff_ft_pct)
 ```
 
 
 
 
 ```{r}
-ggplot(data=player_ft_pct[1:32, ], aes(x=reorder(PLAYER_NAME, -ft_pct), y=ft_pct)) +
+ggplot(data=player_playoff_ft_pct[1:32, ], aes(x=reorder(PLAYER_NAME, -ft_pct), y=ft_pct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
   labs(title= "NBA Playoffs Players Clutch Free Throw %",
