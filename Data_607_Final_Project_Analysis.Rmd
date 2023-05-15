@@ -155,8 +155,16 @@ DT::datatable(team_rs_ppg)
 
 
 ```{r}
-ggplot(data=team_rs_ppg, aes(x=reorder(TEAM_NAME, -points_per_game), y=points_per_game)) +
-  geom_bar(stat="identity", position="dodge") +
+ggplot(data=team_rs_ppg, aes(x=reorder(TEAM_NAME, points_per_game), y=points_per_game)) +
+  geom_bar(stat="identity", 
+           position="dodge",
+           color = "white",
+           fill = "red",
+           show.legend = FALSE) +
+  geom_text(aes(label = round(points_per_game, 3),
+                hjust = -.25,
+                vjust = 0.25),
+            size = 2)  +
   theme_minimal() +
   labs(title="NBA Regular Season Team Clutch Points Per Game",
        y="Points Per Game",
@@ -224,10 +232,7 @@ ggplot(data=team_rs_ftpct, aes(x=reorder(TEAM_NAME, ft_pct), y=ft_pct)) +
   coord_flip()
 ```
 
-
-
 ## Team Regular Season Clutch True Shooting Percentage
-
 
 ```{r}
 team_rs_ts <- team_rs_clutch %>%
@@ -255,10 +260,7 @@ ggplot(data=team_rs_ts, aes(x=reorder(TEAM_NAME, true_shoot_pct), y=true_shoot_p
   coord_flip()
 ```
 
-
-
 ## Team Regular Season Clutch Turnover Rate
-
 
 ```{r}
 team_rs_tov <- team_rs_clutch %>%
@@ -284,31 +286,7 @@ ggplot(data=team_rs_tov, aes(x=reorder(TEAM_NAME, -tov_rate), y=tov_rate)) +
        x="Team") +
   coord_flip()
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Team Clutch Stats - Playoffs 2001-02 to 2021-22
-
-
-
-
-
 
 ```{r}
 team_playoff_clutch <- playoff_season_dataset %>%
@@ -340,10 +318,6 @@ team_playoff_clutch <- playoff_season_dataset %>%
 DT::datatable(team_playoff_clutch)
 ```
 
-
-
-
-
 ## Team Playoffs Clutch Winning Percentage (Minimum 10 games)
 
 ```{r}
@@ -354,18 +328,17 @@ team_playoff_win_pct <- team_playoff_clutch %>%
 DT::datatable(team_playoff_win_pct)
 ```
 
-
-
-
 ```{r}
-ggplot(data=team_playoff_win_pct, aes(x=reorder(TEAM_NAME, -win_pct), y=win_pct)) +
-  geom_bar(stat="identity", position="dodge") +theme_minimal() +
+ggplot(data=team_playoff_win_pct, aes(x=reorder(TEAM_NAME, win_pct), y=win_pct)) +
+  geom_bar(stat="identity", 
+           position="dodge",
+           fill = "red") +
+  theme_minimal() +
   labs(title="NBA Playoffs Team Clutch Win Percentage",
        y="Win Percentage",
        x="Team") +
   coord_flip()
 ```
-
 
 ## Team Playoffs Clutch Total Plus/Minus
 
@@ -376,18 +349,22 @@ team_playoff_pm <- team_playoff_clutch %>%
 DT::datatable(team_playoff_pm)
 ```
 
-
-
 ```{r}
+color <- ifelse(team_playoff_pm$total_pm < 0, "lightblue", "orange")
 ggplot(data=team_playoff_pm, aes(x=reorder(TEAM_NAME, -total_pm), y=total_pm)) +
-  geom_bar(stat="identity", position="dodge") +
+  geom_bar(stat="identity", 
+           position="dodge",
+           fill = color) +
+  geom_text(aes(label = round(total_pm, 3),
+                hjust = ifelse(total_pm < 0, 1.25, -.25),
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="NBA Playoffs Team Clutch Plus/Minus",
        y="Plus/Minus",
        x="Team") +
   coord_flip()
 ```
-
 
 ## Team Playoffs Clutch Field Goal Percentage
 
@@ -398,12 +375,15 @@ team_playoff_fg_pct <- team_playoff_clutch %>%
 DT::datatable(team_playoff_fg_pct)
 ```
 
-
-
-
 ```{r}
-ggplot(data=team_playoff_fg_pct, aes(x=reorder(TEAM_NAME, -total_fgpct), y=total_fgpct)) +
-  geom_bar(stat="identity", position="dodge") +
+ggplot(data=team_playoff_fg_pct, aes(x=reorder(TEAM_NAME, total_fgpct), y=total_fgpct)) +
+  geom_bar(stat="identity", 
+           position="dodge",
+           fill = "orange") +
+  geom_text(aes(label = round(total_fgpct, 3),
+                hjust = -.25,
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="NBA Playoffs Team Clutch Field Goal %",
        y="Field Goal %",
@@ -411,12 +391,7 @@ ggplot(data=team_playoff_fg_pct, aes(x=reorder(TEAM_NAME, -total_fgpct), y=total
   coord_flip()
 ```
 
-
-
 ## Team Playoffs Clutch Free Throw Percentage
-
-
-
 
 ```{r}
 team_playoff_ft_pct <- team_playoff_clutch %>%
@@ -425,11 +400,15 @@ team_playoff_ft_pct <- team_playoff_clutch %>%
 DT::datatable(team_playoff_ft_pct)
 ```
 
-
-
 ```{r}
-ggplot(data=team_playoff_ft_pct, aes(x=reorder(TEAM_NAME, -ft_pct), y=ft_pct)) +
-  geom_bar(stat="identity", position="dodge") +
+ggplot(data=team_playoff_ft_pct, aes(x=reorder(TEAM_NAME, ft_pct), y=ft_pct)) +
+  geom_bar(stat="identity", 
+           position="dodge",
+           fill = "lightblue") +
+  geom_text(aes(label = round(ft_pct, 3),
+                hjust = -.25,
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="NBA Playoffs Team Clutch Free Throw %",
        y="Free Throw %",
@@ -437,10 +416,7 @@ ggplot(data=team_playoff_ft_pct, aes(x=reorder(TEAM_NAME, -ft_pct), y=ft_pct)) +
   coord_flip()
 ```
 
-
-
 ## Team Playoffs Clutch Points Per Game
-
 
 ```{r}
 team_playoff_ppg <- team_playoff_clutch %>%
@@ -451,15 +427,20 @@ DT::datatable(team_playoff_ppg)
 
 
 ```{r}
-ggplot(data=team_playoff_ppg, aes(x=reorder(TEAM_NAME, -points_per_game), y=points_per_game)) +
-  geom_bar(stat="identity", position="dodge") +
+ggplot(data=team_playoff_ppg, aes(x=reorder(TEAM_NAME, points_per_game), y=points_per_game)) +
+  geom_bar(stat="identity", 
+           position="dodge",
+           fill = "red") +
+  geom_text(aes(label = round(points_per_game, 3),
+                hjust = -.25,
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="NBA Playoffs Team Clutch Points Per Game ",
        y="Total Points",
        x="Team") +
   coord_flip()
 ```
-
 
 ## Team Playoffs Clutch True Shooting Percentage
 
@@ -470,11 +451,15 @@ team_playoff_ts <- team_playoff_clutch %>%
 DT::datatable(team_playoff_ts)
 ```
 
-
-
 ```{r}
-ggplot(data=team_playoff_ts, aes(x=reorder(TEAM_NAME, -true_shoot_pct), y=true_shoot_pct)) +
-  geom_bar(stat="identity", position="dodge") +
+ggplot(data=team_playoff_ts, aes(x=reorder(TEAM_NAME, true_shoot_pct), y=true_shoot_pct)) +
+  geom_bar(stat="identity", 
+           position="dodge",
+           fill = "orange") +
+  geom_text(aes(label = round(true_shoot_pct, 3),
+                hjust = -.25,
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="NBA Playoffs Team Clutch True Shooting % ",
        y="True Shooting %",
@@ -482,10 +467,7 @@ ggplot(data=team_playoff_ts, aes(x=reorder(TEAM_NAME, -true_shoot_pct), y=true_s
   coord_flip()
 ```
 
-
-
 ## Team Playoffs Clutch Turnover Rate
-
 
 ```{r}
 team_playoff_tov <- team_playoff_clutch %>%
@@ -494,34 +476,24 @@ team_playoff_tov <- team_playoff_clutch %>%
 DT::datatable(team_playoff_tov)
 ```
 
-
-
-
 ```{r}
-ggplot(data=team_playoff_tov[1:33, ], aes(x=reorder(TEAM_NAME, -tov_rate), y=tov_rate)) +
-  geom_bar(stat="identity", position="dodge") +
+ggplot(data=team_playoff_tov, aes(x=reorder(TEAM_NAME, -tov_rate), y=tov_rate)) +
+  geom_bar(stat="identity", 
+           position="dodge",
+           fill = "lightblue") +
+  geom_text(aes(label = round(tov_rate, 3),
+                hjust = -.25,
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="NBA Playoffs Team Clutch Turnover Rate",
        y="Turnover Rate",
        x="Team") +
   coord_flip()
 ```
-
-
-
-
-
-
-
-
-
-
-
 ## Combining Team Regular Season and Playoff Clutch Stats 
 
-
-### Winning Percentage (Minimum 10 Games)
-
+## Winning Percentage (Minimum 10 Games)
 
 ```{r}
 combined_team_winpct <- inner_join(team_rs_win_pct, team_playoff_win_pct, by="TEAM_NAME") %>%
@@ -530,10 +502,17 @@ combined_team_winpct <- inner_join(team_rs_win_pct, team_playoff_win_pct, by="TE
 DT::datatable(combined_team_winpct)
 ```
 
-
 ```{r}
+color <- ifelse(combined_team_winpct$diff < 0, "lightblue", "orange")
+  
 ggplot(data=combined_team_winpct, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
-  geom_bar(stat="identity", position="dodge") +
+  geom_bar(stat="identity", 
+           position="dodge",
+           fill = color) +
+  geom_text(aes(label = round(diff, 3),
+                hjust = ifelse(diff < 0, 1.25, -.25),
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="Team Differential in Win %",
        y="Win %",
@@ -541,13 +520,7 @@ ggplot(data=combined_team_winpct, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
   coord_flip()
 ```
 
-
-
-
-
-
 ### Plus/Minus
-
 
 ```{r}
 combined_team_pm <- inner_join(team_rs_pm, team_playoff_pm, by="TEAM_NAME") %>%
@@ -555,8 +528,6 @@ combined_team_pm <- inner_join(team_rs_pm, team_playoff_pm, by="TEAM_NAME") %>%
   arrange(desc(diff))
 DT::datatable(combined_team_pm)
 ```
-
-
 
 ```{r}
 ggplot(data=combined_team_pm, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
@@ -568,14 +539,7 @@ ggplot(data=combined_team_pm, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
   coord_flip()
 ```
 
-
-
-
-
-
-
 ### Field Goal %
-
 
 ```{r}
 combined_team_fgpct <- inner_join(team_rs_fgpct, team_playoff_fg_pct, by="TEAM_NAME") %>%
@@ -584,19 +548,20 @@ combined_team_fgpct <- inner_join(team_rs_fgpct, team_playoff_fg_pct, by="TEAM_N
 DT::datatable(combined_team_fgpct)
 ```
 
-
 ```{r}
+color <- ifelse(combined_team_fgpct$diff < 0, "lightblue", "orange")
 ggplot(data=combined_team_fgpct, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
-  geom_bar(stat="identity", position="dodge") +
+  geom_bar(stat="identity", position="dodge", fill = color) +
+  geom_text(aes(label = round(diff, 3),
+                hjust = ifelse(diff < 0, 1.25, -.25),
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="Team Differential in Field Goal %",
        y="Win %",
        x="Team") +
   coord_flip()
 ```
-
-
-
 
 ### Points Per Game
 
@@ -607,10 +572,14 @@ combined_team_ppg <- inner_join(team_rs_ppg, team_playoff_ppg, by="TEAM_NAME") %
 DT::datatable(combined_team_ppg)
 ```
 
-
 ```{r}
+color <- ifelse(combined_team_ppg$diff < 0, "lightblue", "orange")
 ggplot(data=combined_team_ppg, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
-  geom_bar(stat="identity", position="dodge") +
+  geom_bar(stat="identity", position="dodge", fill = color) +
+  geom_text(aes(label = round(diff, 3),
+                hjust = ifelse(diff < 0, 1.25, -.25),
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="Team Differential in Points Per Game",
        y="PPG",
@@ -618,13 +587,7 @@ ggplot(data=combined_team_ppg, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
   coord_flip()
 ```
 
-
-
-
-
 ### Free Throw Percentage
-
-
 
 ```{r}
 combined_team_ftpct <- inner_join(team_rs_ftpct, team_playoff_ft_pct, by="TEAM_NAME") %>%
@@ -633,18 +596,20 @@ combined_team_ftpct <- inner_join(team_rs_ftpct, team_playoff_ft_pct, by="TEAM_N
 DT::datatable(combined_team_ftpct)
 ```
 
-
-
 ```{r}
+color <- ifelse(combined_team_ftpct$diff < 0, "lightblue", "orange")
 ggplot(data=combined_team_ftpct, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
-  geom_bar(stat="identity", position="dodge") +
+  geom_bar(stat="identity", position="dodge", fill = color) +
+  geom_text(aes(label = round(diff, 3),
+                hjust = ifelse(diff < 0, 1.25, -.25),
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="Team Differential in Free Throw %",
        y="FT %",
        x="Team") +
   coord_flip()
 ```
-
 
 ### True Shooting %
 
@@ -655,22 +620,20 @@ combined_team_tspct <- inner_join(team_rs_ts, team_playoff_ts, by="TEAM_NAME") %
 DT::datatable(combined_team_tspct)
 ```
 
-
-
 ```{r}
+color <- ifelse(combined_team_tspct$diff < 0, "lightblue", "orange")
 ggplot(data=combined_team_tspct, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
-  geom_bar(stat="identity", position="dodge") +
+  geom_bar(stat="identity", position="dodge", fill = color) +
+  geom_text(aes(label = round(diff, 3),
+                hjust = ifelse(diff < 0, 1.25, -.25),
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="Team Differential in True Shooting %",
        y="TS %",
        x="Team") +
   coord_flip()
 ```
-
-
-
-
-
 
 ### Turnover Rate
 
@@ -683,8 +646,13 @@ DT::datatable(combined_team_tov)
 
 
 ```{r}
+color <- ifelse(combined_team_tov$diff < 0, "lightblue", "orange")
 ggplot(data=combined_team_tov, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
-  geom_bar(stat="identity", position="dodge") +
+  geom_bar(stat="identity", position="dodge", fill = color) +
+  geom_text(aes(label = round(diff, 3),
+                hjust = ifelse(diff < 0, 1.25, -.25),
+                vjust = 0.25),
+            size = 2) +
   theme_minimal() +
   labs(title="Team Differential in Turnover Rate",
        y="Turnover Rate",
@@ -692,23 +660,23 @@ ggplot(data=combined_team_tov, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
   coord_flip()
 ```
 
-
-
-
 ## Team Takeaways
 
+After reviewing both regular and playoffs season, we see that under pressure, teams performance do get impacted, for better or worse. For instance, Cleveland Cavalier have the biggest change in terms of winning percentage due to an average winning performance during regular season. They do score the highest percentage during playoffs. 
 
+In term of points per game, Orlando Magic shows the biggest change. Interestingly, Portland Trail Blazer have the highest PPG on both regular and playoffs season, hence the differential is small.
 
+For Field Goal %, Philly 76ers shows the strongest change due lackluster % in regular reason and big improvement in the playoffs. Utah Jazz have the top spot of field goal % during regular season, but performed poorly during playoffs. For playoffs season, that goes to Phoenix Suns.
 
+We see a lot of significant changes in free throw %. Dallas Maverick have the highest free throw % during regular season and Atlanta Hawks have the highest with 84% during playoffs, making a significant change with 7.2% increase. Maverick is not that far off with 82.3% in that aspect.
 
+We see small positive changes on true shooting %. Utah Jazz have the highest true shooting % during playoffs while LA Clippers scores the highest in regular seasons. From there, we see a significant drop with Clippers (-23.5%).
 
+Finally on turnover rate, we see that Milwaukee Buck have the biggest change. They performed below average during regular season and exceed during playoffs.
 
 
 
 # Player Clutch Data - Regular Season 2011-12 to 2021-22
-
-
-
 
 ```{r}
 new_player_csv <- read.csv("https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Player_Clutch_Data.csv")
