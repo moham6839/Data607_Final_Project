@@ -1,15 +1,15 @@
 ---
 title: "Data 607 Final Project Analysis"
 author: "Mohamed Hassan-El Serafi and Eddie Xu"
-date: "2023-05-11"
+date: "2023-05-14"
 output: html_document
 ---
 
 # Introduction
 
-The pressure of winning games can affect the performances of players and their respective teams. For this analysis, we will focus on the performance of players and teams during clutch situations, exploring how their performances are affected by pressure situations. More specifically, do teams/players perform better or worse from the regular season to the playoffs? 
+With the game on the line, there are many variables that can affect the outcome. The pressure of winning games can affect the performances of players and their respective teams. For this analysis, we will focus on the performance of players and teams during clutch situations, exploring how their performances are affected by pressure situations. More specifically, do teams/players perform better or worse from the regular season to the playoffs? 
 
-The term "clutch" is defined as a situation when a game is within 5 points in the final 5 minutes. We will examine data that compares team clutch stats with non-clutch stats, focusing specifically on the regular season. Additionally, we will also analyze regular season and playoff clutch performances for both teams and players, respectively. The data we collected centered on 20 NBA seasons for team statistics from 2001-2002 to 2021-2022, and 10 NBA seasons for players from 2011-2012 to 2021-2022. We will use traditional statistics such as field goal and free throw percentages, win percentage, total points, and plus/minus, which measures whether the score margin increased or decreased with the team or player on the court. While there are numerous amounts of advanced stats, we will use only two metrics for this analysis: true shooting percentage, which uses field goal and free throw attempts to calculate a team and player's shooting percentages, and turnover rate, which is calculated utilizing turnovers, field goal and free throw attempts. This data was obtained using the hoopR and nbastatR libraries. 
+The term "clutch" is defined as a situation when a game is within 5 points in the final 5 minutes. We will examine data that compares team clutch stats with non-clutch stats, focusing specifically on the regular season. Additionally, we will also analyze regular season and playoff clutch performances for both teams and players, respectively. The data we collected centered on 20 NBA seasons for team statistics from 2001-2002 to 2021-2022, and 10 NBA seasons for players from 2011-2012 to 2021-2022. We will use traditional statistics such as field goal and free throw percentages, win percentage, total points, and plus/minus, which measures whether the score margin increased or decreased with the team or player on the court. While there are numerous amounts of advanced stats, we will use only two metrics for this analysis: true shooting percentage, which uses field goal and free throw attempts to calculate a team and player's shooting percentages, and turnover rate, which is calculated utilizing turnovers, field goal and free throw attempts. This data was obtained using the hoopR library. libraries. 
 
 
 
@@ -493,7 +493,7 @@ ggplot(data=team_playoff_tov, aes(x=reorder(TEAM_NAME, -tov_rate), y=tov_rate)) 
 ```
 ## Combining Team Regular Season and Playoff Clutch Stats 
 
-## Winning Percentage (Minimum 10 Games)
+### Win Percentage
 
 ```{r}
 combined_team_winpct <- inner_join(team_rs_win_pct, team_playoff_win_pct, by="TEAM_NAME") %>%
@@ -519,7 +519,6 @@ ggplot(data=combined_team_winpct, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
        x="Team") +
   coord_flip()
 ```
-
 ### Plus/Minus
 
 ```{r}
@@ -664,6 +663,7 @@ ggplot(data=combined_team_tov, aes(x=reorder(TEAM_NAME, diff), y=diff)) +
 
 After reviewing both regular and playoffs season, we see that under pressure, teams performance do get impacted, for better or worse. For instance, Cleveland Cavalier have the biggest change in terms of winning percentage due to an average winning performance during regular season. They do score the highest percentage during playoffs. 
 
+
 In term of points per game, Orlando Magic shows the biggest change. Interestingly, Portland Trail Blazer have the highest PPG on both regular and playoffs season, hence the differential is small.
 
 For Field Goal %, Philly 76ers shows the strongest change due lackluster % in regular reason and big improvement in the playoffs. Utah Jazz have the top spot of field goal % during regular season, but performed poorly during playoffs. For playoffs season, that goes to Phoenix Suns.
@@ -674,13 +674,16 @@ We see small positive changes on true shooting %. Utah Jazz have the highest tru
 
 Finally on turnover rate, we see that Milwaukee Buck have the biggest change. They performed below average during regular season and exceed during playoffs.
 
+Cleveland, Miami, Golden State, and Los Angelos Lakers were the top 4 teams in team clutch win % differential from the regular season to playoffs. Unsurprisingly, all four teams have won NBA championships.
+
+During the regular season, the San Antonio Spurs performed superbly in the clutch. They were 1st in clutch win percentage, ranking 2nd in Plus/Minus, 5th in field goal clutch percentage, 6th in points per game and true shooting percentage. This success in clutch moments translated to the playoffs, ranking 5th in clutch win %, 4th in clutch field goal percentage, 4th in plus/minus, 4th in points per game and 7th in true shooting %. 
 
 
 # Player Clutch Data - Regular Season 2011-12 to 2021-22
 
 ```{r}
 new_player_csv <- read.csv("https://raw.githubusercontent.com/moham6839/Data607_Final_Project/master/Player_Clutch_Data.csv")
-head(new_player_csv)
+DT::datatable(new_player_csv)
 ```
 
 
@@ -734,7 +737,7 @@ DT::datatable(rs_clutch_player)
 ```{r}
 player_rs_pm <- rs_clutch_player %>%
   select(PLAYER_NAME, total_pm, total_games) %>%
-  #filter(total_games >= 20) %>%
+  filter(total_games >= 200) %>%
   arrange(desc(total_pm))
 DT::datatable(player_rs_pm)
 ```
@@ -754,14 +757,17 @@ ggplot(data=player_rs_pm[1:25, ], aes(x=reorder(PLAYER_NAME, -total_pm), y=total
 
 
 
-## Regular Season Top 25 Players Clutch Winning Percentage (Minimum 150 games)
+
+
+
+## Regular Season Top 25 Players Clutch Win Percentage (Minimum 200 games)
 
 
 
 ```{r}
 player_rs_win_pct <- rs_clutch_player %>%
   select(PLAYER_NAME, win_pct, total_games) %>%
-  filter(total_games >= 150) %>%
+  filter(total_games >= 200) %>%
   arrange(desc(win_pct))
 DT::datatable(player_rs_win_pct)
 ```
@@ -783,26 +789,17 @@ ggplot(data=player_rs_win_pct[1:25, ], aes(x=reorder(PLAYER_NAME, -win_pct), y=w
 
 
 
-```{r}
-ggplot(data=rs_clutch_player[1:25, ], aes(x=reorder(PLAYER_NAME, -win_pct), y=win_pct)) +
-  geom_bar(stat="identity", position="dodge") +
-  theme_minimal() +
-  labs(title="NBA Top 25 Regular Season Player Clutch Win %",
-       y="Win Percentage",
-       x="Player") +
-  coord_flip()
-```
 
 
 
 
-## Regular Season Top 25 Players Clutch Total Points Per Game (Minimum 50 games)
+## Regular Season Top 25 Players Clutch Total Points Per Game (Minimum 200 games)
 
 
 ```{r}
 player_rs_ppg <- rs_clutch_player %>%
   select(PLAYER_NAME, points_per_game, total_games) %>%
-  filter(total_games >= 50) %>%
+  filter(total_games >= 200) %>%
   arrange(desc(points_per_game))
 DT::datatable(player_rs_ppg)
 ```
@@ -954,12 +951,12 @@ DT::datatable(playoff_performers)
 
 
 
-## Playoffs Top 20 Players Clutch Total Plus/Minus
+## Playoffs Top 20 Players Clutch Total Plus/Minus (Minimum 20 Games)
 
 ```{r}
 player_playoff_pm <- playoff_performers %>%
   select(PLAYER_NAME, total_pm, total_games) %>%
-  #filter(total_games >= 20) %>%
+  #filter(total_games >= 25) %>%
   arrange(desc(total_pm))
 DT::datatable(player_playoff_pm)
 ```
@@ -996,7 +993,7 @@ ggplot(data=playoff_performers[494:514, ], aes(x=reorder(PLAYER_NAME, total_pm),
 
 
 
-## Playoffs Top 20 Players Clutch Winning Percentage (Minimum 20 Playoff Games)
+## Playoffs Top 20 Players Clutch Win Percentage (Minimum 20 Playoff Games)
 
 
 
@@ -1026,7 +1023,7 @@ ggplot(data=player_playoff_win_pct[1:20, ], aes(x=reorder(PLAYER_NAME, -win_pct)
 
 
 
-## Playoffs Bottom 20 Players Clutch Winning Percentage
+## Playoffs Bottom 20 Players Clutch Win Percentage
 
 ```{r}
 ggplot(data=player_playoff_win_pct[71:91, ], aes(x=reorder(PLAYER_NAME, win_pct), y=win_pct)) +
@@ -1052,7 +1049,6 @@ player_playoff_fg_pct <- playoff_performers %>%
   filter(total_fga >= 40) %>%
   arrange(desc(total_fgpct))
 DT::datatable(player_playoff_fg_pct)
-
 ```
 
 
@@ -1082,7 +1078,7 @@ ggplot(data=player_playoff_fg_pct[1:20, ], aes(x=reorder(PLAYER_NAME, -total_fgp
 
 
 ```{r}
-ggplot(data=player_playoff_fg_pct[20:40, ], aes(x=reorder(PLAYER_NAME, total_fgpct), y=total_fgpct)) +
+ggplot(data=player_playoff_fg_pct[21:41, ], aes(x=reorder(PLAYER_NAME, total_fgpct), y=total_fgpct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
   labs(title="NBA Playoffs Bottom 20 Players Clutch Field Goal %",
@@ -1101,14 +1097,14 @@ player_playoff_ft_pct <- playoff_performers %>%
   select(PLAYER_NAME, ft_pct, total_fta) %>%
   filter(total_fta >= 25) %>%
   arrange(desc(ft_pct))
-DT::datatable(player_ft_pct)
+DT::datatable(player_playoff_ft_pct)
 ```
 
 
 
 
 ```{r}
-ggplot(data=player_ft_pct[1:32, ], aes(x=reorder(PLAYER_NAME, -ft_pct), y=ft_pct)) +
+ggplot(data=player_playoff_ft_pct[1:32, ], aes(x=reorder(PLAYER_NAME, -ft_pct), y=ft_pct)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
   labs(title= "NBA Playoffs Players Clutch Free Throw %",
@@ -1124,7 +1120,7 @@ ggplot(data=player_ft_pct[1:32, ], aes(x=reorder(PLAYER_NAME, -ft_pct), y=ft_pct
 
 
 
-## Playoffs Top 25 Players Clutch Points Per Game (Minimum 20 games)
+## Playoffs Top 20 Players Clutch Points Per Game (Minimum 25 games)
 
 
 ```{r}
@@ -1257,7 +1253,7 @@ ggplot(data=combined_ppg_df[1:20, ], aes(x=reorder(PLAYER_NAME, diff), y=diff)) 
 
 
 ```{r}
-ggplot(data=combined_ppg_df[45:65, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
+ggplot(data=combined_ppg_df[27:47, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
   labs(title="Player Difference Points Per Game (Minimum 25 Games)",
@@ -1298,7 +1294,7 @@ ggplot(data=combined_ftpct_df, aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
 
 
 
-### Winning Percentage
+### Win Percentage
 
 
 
@@ -1315,7 +1311,7 @@ DT::datatable(combined_win_pct_df)
 ggplot(data=combined_win_pct_df[1:20, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="Player Winning % Difference (Minimum 150 Reg. Season and 20 Playoff Games)",
+  labs(title="Player Winning % Difference (Minimum 200 Reg. Season and 20 Playoff Games)",
        y="Win %",
        x="Player") +
   coord_flip()
@@ -1323,10 +1319,10 @@ ggplot(data=combined_win_pct_df[1:20, ], aes(x=reorder(PLAYER_NAME, -diff), y=di
 
 
 ```{r}
-ggplot(data=combined_win_pct_df[62:82, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
+ggplot(data=combined_win_pct_df[45:65, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff)) +
   geom_bar(stat="identity", position="dodge") +
   theme_minimal() +
-  labs(title="Player Win % Difference (Minimum 150 Reg. Season and 20 PO Games)",
+  labs(title="Player Win % Difference (Minimum 200 Reg. Season and 20 PO Games)",
        y="Win %",
        x="Player") +
   coord_flip()
@@ -1365,23 +1361,23 @@ ggplot(data=combined_tspct_df[1:19, ], aes(x=reorder(PLAYER_NAME, -diff), y=diff
 
 ## Player Takeaways
 
-- Kyrie Irving has the biggest decline in Points Per Game in clutch situations from the regular season to playoffs, followed by Russell Westbrook. Other notable names in the top 10 in decline were Kevin Durant and James Harden. 
+- Kyrie Irving has the biggest decline in Points Per Game in clutch situations from the regular season to playoffs, followed by Russell Westbrook. Other notable names in the top 10 in declining points per game were Kevin Durant and James Harden. 
 
-- While Chris Paul had the highest positive Plus/Minus number among all players in the regular season, he had one of the highest negative Plus/Minus in the playoffs. 
+- While Chris Paul had the highest positive Plus/Minus number among all players in the regular season, he had one of the highest negative Plus/Minus in the playoffs. Notably, his clutch win % declined in the playoffs as well, from winning 65% of regular season games to just 50% in the playoffs.
 
+- LeBron James produced in the clutch. He ranked 3rd in points per game during the regular season and playoffs, with a slight decrease of approximately 0.14 points from the regular season to playoffs. Despite having a decrease in field goal percentage from the regular season to playoffs, his win percentage increased by 0.03, illustrating his level of clutch play.
 
-
+- While Kawhi Leonard ranked first in clutch win percentage during the regular season, he did not rank high in some of the statistical categories. He ranked 12th in plus/minus, 24th in points per game, and 54th in field goal percentage. Additionally, there was a significant decrease in win percentage , from close to 66% in the regular season to 52% in the playoffs, showing declines in both points per game and field goal percentage.
 
 
 
 ## Next Steps
 
 
-Possible next steps that can be explored include using more advanced stats such as rebounding rate, effective field goal and assist percentages. Additionally, with the exception of Plus/Minus, this analysis does not measure the impact of defense in clutch situations. Further 
+Possible next steps that can be explored include using more advanced stats such as rebounding rate, effective field goal and assist percentages. Additionally, with the exception of Plus/Minus, this analysis does not measure the impact of defense in clutch situations. Traditional defensive stats such as blocks and steals, as well as advanced stats such as defensive efficiency, could shed light on the affects of defense in clutch situations from a team perspective. 
 
 
+## Conclusion
 
-
-
-
+The game of basketball is a team sport. However, players who are capable of making pressurized shots that help their teams win games is an important quality that enables teams to win a lot of games and in some situations a championship. Performing in the clutch is a special skill that permeates throughout sports. In basketball, being "clutch" means that a player is able to make a score a basket or make a play that helps their team to a win. This analysis explores that various stats that can help explain how teams and players have performed in clutch situations, providing a groundwork to build on to perform further and future analyses on clutch team and player stats.
 
